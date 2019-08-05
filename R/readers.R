@@ -50,11 +50,11 @@ read_loom <- function(directory, manifest){
     ## loom format.  This way we make sure that the at least the cell/gene ids column
     ## has a consistent naming.  Both fields are also required to create a Seurat
     ## object.
-    cell_metadata <- canonize_id(cell_metadata, regex="^cell[^a-z]*id$", to_name="CellID")
-    gene_metadata <- canonize_id(gene_metadata, regex="^(gene|name|var_names)$", to_name="Name")
+    cell_metadata <- canonize_id(cell_metadata, regex="^(cell[^a-z]*id|name|obs_names)$", to_name="fg_cell_id")
+    gene_metadata <- canonize_id(gene_metadata, regex="^(gene[^a-z]*id|name|var_names)$", to_name="fg_gene_id")
 
-    rownames(gene_metadata) <- gene_metadata[["Name"]]
-    rownames(cell_metadata) <- cell_metadata[["CellID"]]
+    rownames(gene_metadata) <- gene_metadata[["fg_gene_id"]]
+    rownames(cell_metadata) <- cell_metadata[["fg_cell_id"]]
 
     matrix <- Matrix::Matrix(t(contents$matrix), sparse=T)
     dimnames(matrix) <- list(rownames(gene_metadata), rownames(cell_metadata))
