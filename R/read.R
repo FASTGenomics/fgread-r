@@ -32,6 +32,7 @@ add_metadata <- function(seurat, data_set){
     seurat@meta.data$fg_dataset_id <- as.factor(data_set@id)
     seurat@meta.data$fg_dataset_title <- as.factor(data_set@manifest$title)
     seurat@misc$metacolumns <- c(seurat@misc$metacolumns, "fg_dataset_id", "fg_dataset_title")
+    return(seurat)
 }
 
 
@@ -45,7 +46,7 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
     ## find a matching reader
     if(format %in% names(readers)){
         seurat <- readers[[format]](data_set)
-        add_metadata(seurat, data_set)
+        seurat <- add_metadata(seurat, data_set)
         return(seurat)
 
     } else {
