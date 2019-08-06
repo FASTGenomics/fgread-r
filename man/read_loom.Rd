@@ -9,7 +9,7 @@ dimensional attributes are discarded).  To keep the implementation simple we rea
 whole object into memory, including the dense count matrix.  This could be a
 potential bottleneck for larger data sets but can be optimized later.}
 \usage{
-read_loom(directory, manifest)
+read_loom(data_set)
 }
 \description{
 Unfortunaly there is no Seurat function that straight up reads the loom file into a

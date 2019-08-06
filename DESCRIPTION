@@ -15,6 +15,7 @@ Imports:
     jsonlite,
     hdf5r,
     rhdf5,
-    Seurat
+    Seurat,
+    glue
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.1

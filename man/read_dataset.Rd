@@ -2,13 +2,10 @@
 % Please edit documentation in R/read.R
 \name{read_dataset}
 \alias{read_dataset}
-\title{Reads a single data set from a given path}
+\title{Reads a single data set}
 \usage{
-read_dataset(path, readers = DEFAULT_READERS)
-}
-\arguments{
-\item{path}{Location of the data set}
+read_dataset(data_set, readers = DEFAULT_READERS)
 }
 \description{
-Reads a single data set from a given path
+Reads a single data set
 }

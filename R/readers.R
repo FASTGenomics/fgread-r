@@ -22,8 +22,8 @@ matrix_to_seurat <- function(matrix, cell_metadata, gene_metadata){
 }
 
 
-read_seurat <- function(directory, manifest){
-    file_name <- file.path(directory, paste(data_file_name, "rds", sep="."))
+read_seurat <- function(data_set){
+    file_name <- file.path(data_set@path, paste(data_file_name, "rds", sep="."))
     return(readRDS(file_name))
 }
 
@@ -34,10 +34,11 @@ read_seurat <- function(directory, manifest){
 #' dimensional attributes are discarded).  To keep the implementation simple we read the
 #' whole object into memory, including the dense count matrix.  This could be a
 #' potential bottleneck for larger data sets but can be optimized later.
-read_loom <- function(directory, manifest){
-    file_name <- file.path(directory, paste(data_file_name, "loom", sep="."))
+read_loom <- function(data_set){
+    file_name <- file.path(data_set@path, paste(data_file_name, "loom", sep="."))
     file <- rhdf5::H5Fopen(file_name, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
+    rhdf5::H5Fclose(file)
 
     cleanup <- function(cols){
         Map(as.vector, Filter(function(x) length(dim(x))==1, cols))
@@ -65,10 +66,11 @@ read_loom <- function(directory, manifest){
 
 #' this only works if there's a CSR matrix in the AnnData object.  We would be happy to
 #' use the Seurats ReadH5AD function but it's broken.
-read_anndata <- function(directory, manifest){
-    file_name <- file.path(directory, paste(data_file_name, "h5ad", sep="."))
+read_anndata <- function(data_set){
+    file_name <- file.path(data_set@path, paste(data_file_name, "h5ad", sep="."))
     file <- rhdf5::H5Fopen(file_name, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
+    rhdf5::H5Fcloser(file)
 
     cell_metadata <- contents$obs
     gene_metadata <- contents$var
@@ -84,16 +86,16 @@ read_anndata <- function(directory, manifest){
     return(matrix_to_seurat(matrix, cell_metadata, gene_metadata))
 }
 
-read_10x_hdf5 <- function(directory, manifest){
-    file_name <- file.path(directory, paste(data_file_name, "h5", sep="."))
+read_10x_hdf5 <- function(data_set){
+    file_name <- file.path(data_set@path, paste(data_file_name, "h5", sep="."))
     matrix <- Seurat::Read10X_h5(file_name)
     seurat <- Seurat::CreateSeuratObject(counts=matrix, min.cells=0, min.features=0)
     return(seurat)
 }
 
 #' here we need to unpack the data set before reading it
-read_dropseq <- function(directory, manifest){
-    file_name <- file.path(directory, paste(data_file_name, "tsv", sep="."))
+read_dropseq <- function(data_set){
+    file_name <- file.path(data_set@path, paste(data_file_name, "tsv", sep="."))
     x <- data.table::fread(file_name, sep="\t", header=F, skip=1, na.strings=NULL)
     genes <- x[[1]]
     cells <- colnames(data.table::fread(file_name, sep="\t", header=T, nrows=0))

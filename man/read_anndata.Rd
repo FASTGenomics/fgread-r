@@ -5,7 +5,7 @@
 \title{this only works if there's a CSR matrix in the AnnData object.  We would be happy to
 use the Seurats ReadH5AD function but it's broken.}
 \usage{
-read_anndata(directory, manifest)
+read_anndata(data_set)
 }
 \description{
 this only works if there's a CSR matrix in the AnnData object.  We would be happy to

@@ -4,7 +4,7 @@
 \alias{read_dropseq}
 \title{here we need to unpack the data set before reading it}
 \usage{
-read_dropseq(directory, manifest)
+read_dropseq(data_set)
 }
 \description{
 here we need to unpack the data set before reading it
