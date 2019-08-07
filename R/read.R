@@ -14,6 +14,8 @@ DataSet <- function(path){
     return(new("DataSet", id=id, manifest=manifest, path=path))
 }
 
+#' Lists data sets
+#'
 #' @export
 list_datasets <- function(data_dir=DATA_DIR){
     dirs <- list.dirs(path=data_dir, full.names=T)
