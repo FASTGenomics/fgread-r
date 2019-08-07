@@ -1,0 +1,21 @@
+language: R
+sudo: false
+cache: packages
+
+script: true
+
+install:
+  - Rscript -e 'install.packages("remotes")'
+  - Rscript -e 'remotes::install_cran("pkgdown")'
+
+before_deploy:
+  - Rscript -e 'pkgdown::build_site(examples=F)'
+  - rm .gitignore               # there is docs/* in gitignore
+
+deploy:
+  provider: pages
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN
+  keep-history: false
+  on:
+    branch: master
