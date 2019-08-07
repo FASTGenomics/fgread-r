@@ -9,7 +9,7 @@ install:
   - Rscript -e 'remotes::install_cran("pkgdown")'
 
 before_deploy:
-  - Rscript -e 'pkgdown::build_site(examples=F)'
+  - Rscript -e 'pkgdown::build_site(examples=F, new_process = FALSE)'
   - rm .gitignore               # there is docs/* in gitignore
 
 deploy:
