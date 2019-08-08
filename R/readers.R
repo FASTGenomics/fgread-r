@@ -7,7 +7,7 @@ canonize_id <- function(metadata, regex, to_name){
         cell_id_name <- sort(cell_id_names)[1]
         names(metadata)[cols==cell_id_name] <- to_name
     } else {
-        stop(stringr::str_interp("Looking for ${to_name}, could not find a column matching ${regex}."))
+        stop(glue::glue("Looking for {to_name}, could not find a column matching {regex}."))
     }
     return(metadata)
 }
@@ -23,8 +23,7 @@ matrix_to_seurat <- function(matrix, cell_metadata, gene_metadata){
 
 
 read_seurat <- function(data_set){
-    file_name <- file.path(data_set@path, paste(data_file_name, "rds", sep="."))
-    return(readRDS(file_name))
+    return(readRDS(data_set@file))
 }
 
 
@@ -35,8 +34,7 @@ read_seurat <- function(data_set){
 #' whole object into memory, including the dense count matrix.  This could be a
 #' potential bottleneck for larger data sets but can be optimized later.
 read_loom <- function(data_set){
-    file_name <- file.path(data_set@path, paste(data_file_name, "loom", sep="."))
-    file <- rhdf5::H5Fopen(file_name, flags="H5F_ACC_RDONLY")
+    file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
     rhdf5::H5Fclose(file)
 
@@ -51,8 +49,8 @@ read_loom <- function(data_set){
     ## loom format.  This way we make sure that the at least the cell/gene ids column
     ## has a consistent naming.  Both fields are also required to create a Seurat
     ## object.
-    cell_metadata <- canonize_id(cell_metadata, regex="^(cell[^a-z]*id|name|obs_names)$", to_name="fg_cell_id")
-    gene_metadata <- canonize_id(gene_metadata, regex="^(gene[^a-z]*id|name|var_names)$", to_name="fg_gene_id")
+    cell_metadata <- canonize_id(cell_metadata, regex="^(cell[^a-z]*(id|name)?$|name|obs_names)$", to_name="fg_cell_id")
+    gene_metadata <- canonize_id(gene_metadata, regex="^(gene[^a-z]*(id|name)?$|name|var_names)$", to_name="fg_gene_id")
 
     rownames(gene_metadata) <- gene_metadata[["fg_gene_id"]]
     rownames(cell_metadata) <- cell_metadata[["fg_cell_id"]]
@@ -67,10 +65,9 @@ read_loom <- function(data_set){
 #' this only works if there's a CSR matrix in the AnnData object.  We would be happy to
 #' use the Seurats ReadH5AD function but it's broken.
 read_anndata <- function(data_set){
-    file_name <- file.path(data_set@path, paste(data_file_name, "h5ad", sep="."))
-    file <- rhdf5::H5Fopen(file_name, flags="H5F_ACC_RDONLY")
+    file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
-    rhdf5::H5Fcloser(file)
+    rhdf5::H5Fclose(file)
 
     cell_metadata <- contents$obs
     gene_metadata <- contents$var
@@ -87,18 +84,17 @@ read_anndata <- function(data_set){
 }
 
 read_10x_hdf5 <- function(data_set){
-    file_name <- file.path(data_set@path, paste(data_file_name, "h5", sep="."))
-    matrix <- Seurat::Read10X_h5(file_name)
+    matrix <- Seurat::Read10X_h5(data_set@file)
     seurat <- Seurat::CreateSeuratObject(counts=matrix, min.cells=0, min.features=0)
     return(seurat)
 }
 
 #' here we need to unpack the data set before reading it
 read_dropseq <- function(data_set){
-    file_name <- file.path(data_set@path, paste(data_file_name, "tsv", sep="."))
-    x <- data.table::fread(file_name, sep="\t", header=F, skip=1, na.strings=NULL)
+    file <- data_set@file
+    x <- data.table::fread(file, sep="\t", header=F, skip=1, na.strings=NULL)
     genes <- x[[1]]
-    cells <- colnames(data.table::fread(file_name, sep="\t", header=T, nrows=0))
+    cells <- colnames(data.table::fread(file, sep="\t", header=T, nrows=0))
     matrix <- as.matrix(x[,2:dim(x)[2]])
     dimnames(matrix) <- list(genes, cells)
     spmatrix <- Matrix::Matrix(matrix, sparse=T)
