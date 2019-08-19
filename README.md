@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/FASTGenomics/jupyter-fgread-r.svg?branch=master)](https://fastgenomics.github.io/jupyter-fgread-r/docs/)
+
 # Supported formats
 
 - CellRanger (hdf5), via Seurat
