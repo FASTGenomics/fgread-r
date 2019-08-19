@@ -1,5 +1,3 @@
-data_file_name <- "data"
-
 canonize_id <- function(metadata, regex, to_name){
     cols<- names(metadata)
     cell_id_names <- grep(regex, cols, value=T, ignore.case=T)

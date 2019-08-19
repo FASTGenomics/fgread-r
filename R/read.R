@@ -1,5 +1,6 @@
 ROOT_DIR <- Sys.getenv("FGROOT","/fastgenomics")
 DATA_DIR <- file.path(ROOT_DIR, "data")
+INFO_FILE_NAME <- "dataset_info.json"
 
 setClass("DataSet",
          slots = list(id="integer", metadata="list", path="character", file="character")
@@ -8,7 +9,7 @@ setClass("DataSet",
 ## constructor for DataSet
 DataSet <- function(path){
     id <- as.integer(tail(strsplit(path, "_")[[1]], n=1))
-    metadata <- jsonlite::read_json(file.path(path, "metadata.json"))
+    metadata <- jsonlite::read_json(file.path(path, INFO_FILE_NAME))
     return(new("DataSet",
                id=id,
                metadata=metadata,
