@@ -1,5 +1,3 @@
-library(glue)
-
 ROOT_DIR <- Sys.getenv("FGROOT","/fastgenomics")
 DATA_DIR <- file.path(ROOT_DIR, "data")
 
@@ -50,13 +48,19 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
     format <- data_set@metadata$format
 
     ## find a matching reader
-    if(format %in% names(readers)){
+    supported_readers_str <- paste(names(readers), collapse=", ")
+    if(format == "Other"){
+        stop(glue::glue('The format of the data set "{data_set@metadata$title}" is "{format}".  Data sets with the "{format}" format are unsupported by this module and have to be loaded manually.'))
+    }
+    else if(format == "Not set"){
+        stop(glue::glue('The format of the data set "{data_set@metadata$title}" is "{format}".  Please specify the data format in the Details of this data set if you can modify the data set or ask the data set owner to do that.'))
+    }
+    else if(format %in% names(readers)){
         seurat <- readers[[format]](data_set)
         seurat <- add_metadata(seurat, data_set)
         return(seurat)
-
     } else {
-        stop(glue("Unsupported format: {format}. Use one of {names(readers)}"))
+        stop(glue::glue('Unsupported format: "{format}".'))
     }
 }
 
@@ -68,7 +72,7 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
 read_datasets <- function(data_sets=list_datasets(data_dir), readers=DEFAULT_READERS){
     Map(
         function(dset){
-            print(glue('Loading data set "{dset@metadata$title}" in format {dset@metadata$format} from {dset@path}.'))
+            print(glue::glue('Loading data set "{dset@metadata$title}" in format {dset@metadata$format} from {dset@path}.'))
             read_dataset(data_set=dset, readers=readers)
         },
         data_sets

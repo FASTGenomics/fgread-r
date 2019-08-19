@@ -22,7 +22,7 @@ matrix_to_seurat <- function(matrix, cell_metadata, gene_metadata){
 }
 
 
-read_seurat <- function(data_set){
+read_seurat_to_seurat <- function(data_set){
     return(readRDS(data_set@file))
 }
 
@@ -33,7 +33,7 @@ read_seurat <- function(data_set){
 #' dimensional attributes are discarded).  To keep the implementation simple we read the
 #' whole object into memory, including the dense count matrix.  This could be a
 #' potential bottleneck for larger data sets but can be optimized later.
-read_loom <- function(data_set){
+read_loom_to_seurat <- function(data_set){
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
     rhdf5::H5Fclose(file)
@@ -64,7 +64,7 @@ read_loom <- function(data_set){
 
 #' this only works if there's a CSR matrix in the AnnData object.  We would be happy to
 #' use the Seurats ReadH5AD function but it's broken.
-read_anndata <- function(data_set){
+read_anndata_to_seurat <- function(data_set){
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
     rhdf5::H5Fclose(file)
@@ -83,14 +83,14 @@ read_anndata <- function(data_set){
     return(matrix_to_seurat(matrix, cell_metadata, gene_metadata))
 }
 
-read_10x_hdf5 <- function(data_set){
+read_10xhdf5_to_seurat <- function(data_set){
     matrix <- Seurat::Read10X_h5(data_set@file)
     seurat <- Seurat::CreateSeuratObject(counts=matrix, min.cells=0, min.features=0)
     return(seurat)
 }
 
 #' here we need to unpack the data set before reading it
-read_dropseq <- function(data_set){
+read_dropseqtsv_to_seurat <- function(data_set){
     file <- data_set@file
     x <- data.table::fread(file, sep="\t", header=F, skip=1, na.strings=NULL)
     genes <- x[[1]]
@@ -103,9 +103,9 @@ read_dropseq <- function(data_set){
 }
 
 DEFAULT_READERS <- list(
-    "Loom"=read_loom,
-    "Seurat Object"=read_seurat,
-    "AnnData"=read_anndata,
-    "10x h5"=read_10x_hdf5,
-    "Drop-Seq"=read_dropseq
+    "Loom"=read_loom_to_seurat,
+    "Seurat Object"=read_seurat_to_seurat,
+    "AnnData"=read_anndata_to_seurat,
+    "10x (hdf5)"=read_10xhdf5_to_seurat,
+    "Drop-Seq (tsv)"=read_dropseqtsv_to_seurat
 )
