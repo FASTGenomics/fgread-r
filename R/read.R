@@ -60,6 +60,11 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
     }
     else if(format %in% names(readers)){
         seurat <- readers[[format]](data_set)
+
+        ## Calling this function here provides compatibility between various readers,
+        ## e.g. every seurat data set will have @project.name coming from the manifest.
+        ## On the downside, with custom readers this may lead to overwriting
+        ## user-defined data in the seurat object.
         seurat <- add_metadata(seurat, data_set)
         return(seurat)
     } else {
