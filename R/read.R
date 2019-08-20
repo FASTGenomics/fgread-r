@@ -34,9 +34,11 @@ list_datasets <- function(data_dir=DATA_DIR){
 
 #' adds some data from the metadata directly to the meta.data of the seurat object.
 add_metadata <- function(seurat, data_set){
+    seurat@project.name <- data_set@metadata$title
     seurat@meta.data$fg_dataset_id <- as.factor(data_set@id)
     seurat@meta.data$fg_dataset_title <- as.factor(data_set@metadata$title)
     seurat@misc$metacolumns <- c(seurat@misc$metacolumns, "fg_dataset_id", "fg_dataset_title")
+    seurat@misc$fg_metadata <- data_set@metadata
     return(seurat)
 }
 
