@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/FASTGenomics/jupyter-fgread-r.svg?branch=master)](https://fastgenomics.github.io/jupyter-fgread-r/docs/)
+[![Build Status](https://travis-ci.org/FASTGenomics/fgread-r.svg?branch=master)](https://fastgenomics.github.io/fgread-r/docs/)
 
 # Supported formats
 
