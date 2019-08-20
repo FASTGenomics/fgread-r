@@ -21,5 +21,31 @@
 - The current AnnData reader works only when the `.X` component is in the sparse CSR
   format.  Other formats would had to be implemented in the future.
 
-- For now, the file types are taken from a json file.  This will have to be updated once
-  the proper architecture is in place.
+
+# Development and testing
+
+Clone the repository along with the test data by running
+
+``` bash
+git clone git@github.com:FASTGenomics/fgread-r.git
+git submodule init
+git submodule update
+```
+
+Run R the `fgread-r` directory, install the devtools package (if you don't have it already)
+
+``` R
+install.packages("devtools")
+```
+
+And install the package dependencies
+
+``` R
+devtools::install_deps(upgrade="never")
+```
+
+Once the dependencies are there you can run the tests with
+
+``` R
+testthat::test()
+```
