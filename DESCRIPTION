@@ -1,6 +1,6 @@
 Package: fgread
 Title: Reading of various data formats into Seurat
-Version: 0.0.1
+Version: 0.0.8
 Authors@R: 
     person(given = "FAST",
            family = "Genomics",
