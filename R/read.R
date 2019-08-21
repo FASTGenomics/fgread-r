@@ -17,6 +17,18 @@ DataSet <- function(path){
                file=file.path(path, metadata$file)))
 }
 
+setMethod(
+    "show", "DataSet",
+    function(object){
+        print(glue::glue(
+                        "id: {object@id}\n",
+                        "title: {object@metadata$title}\n",
+                        "format: {object@metadata$format}\n",
+                        "path: {object@path}"
+                    ))
+    }
+)
+
 #' Lists data sets
 #'
 #' @export
