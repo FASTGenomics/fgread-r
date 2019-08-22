@@ -2,11 +2,31 @@
 % Please edit documentation in R/read.R
 \name{read_datasets}
 \alias{read_datasets}
-\title{Loads multiple data sets}
+\title{Loads all data sets available for this analysis.  Optionally, you can provide a list
+of data sets to load to load only selected ones.}
 \usage{
 read_datasets(data_sets = list_datasets(data_dir),
   readers = DEFAULT_READERS)
 }
+\arguments{
+\item{data_sets}{Optional argument with a list of the datasets to load.  Typically a
+list returned by \code{\link{list_datasets}} filtered to include only specific
+data sets.}
+}
+\value{
+A list of data sets loaded into seurat objects, indexed by data set id (same
+indices as in the \code{\link{list_datasets}}).
+}
 \description{
-Loads multiple data sets
+Loads all data sets available for this analysis.  Optionally, you can provide a list
+of data sets to load to load only selected ones.
+}
+\examples{
+# loads all data sets as seurat objects
+seurat <- read_datasets()
+
+# loads only the first and second data sets
+dsets_list <- list_datasets()
+seurat <- read_datasets(dsets_list[c(1,2)])
+
 }

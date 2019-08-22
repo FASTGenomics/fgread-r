@@ -2,10 +2,23 @@
 % Please edit documentation in R/read.R
 \name{read_dataset}
 \alias{read_dataset}
-\title{Reads a single data set}
+\title{Reads a single data set, taking a \code{\link{DataSet}} object as an argument.  This
+function should be used with conjunction to \code{\link{list_datasets}}.}
 \usage{
 read_dataset(data_set, readers = DEFAULT_READERS)
 }
+\arguments{
+\item{data_set}{The data set to load (passed as a DataSet object)}
+}
+\value{
+Data set loaded as a Seurat Object
+}
 \description{
-Reads a single data set
+Reads a single data set, taking a \code{\link{DataSet}} object as an argument.  This
+function should be used with conjunction to \code{\link{list_datasets}}.
+}
+\examples{
+dsets_list <- list_datasets()
+read_dataset(dsets_list[[1]])  # returns the Seurat object constructed from the first data set
+
 }

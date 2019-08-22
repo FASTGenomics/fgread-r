@@ -2,10 +2,10 @@
 % Please edit documentation in R/read.R
 \name{add_metadata}
 \alias{add_metadata}
-\title{adds some data from the manifest directly to the meta.data of the seurat object.}
+\title{Adds some data from the metadata directly to the meta.data of the seurat object.}
 \usage{
 add_metadata(seurat, data_set)
 }
 \description{
-adds some data from the manifest directly to the meta.data of the seurat object.
+Adds some data from the metadata directly to the meta.data of the seurat object.
 }
