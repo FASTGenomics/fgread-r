@@ -90,11 +90,10 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
 #'
 #' @export
 read_datasets <- function(data_sets=list_datasets(data_dir), readers=DEFAULT_READERS){
-    Map(
-        function(dset){
-            print(glue::glue('Loading data set "{dset@metadata$title}" in format {dset@metadata$format} from {dset@path}.'))
-            read_dataset(data_set=dset, readers=readers)
-        },
-        data_sets
-    )
+    loaded = list()
+    for (dset in data_sets){
+        print(glue::glue('Loading data set "{dset@metadata$title}" in format {dset@metadata$format} from {dset@path}.'))
+        loaded[[dset@id]] <- read_dataset(data_set=dset, readers=readers)
+    }
+    return(loaded)
 }
