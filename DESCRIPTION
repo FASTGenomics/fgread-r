@@ -1,6 +1,6 @@
 Package: fgread
 Title: FASTGenomics read module for R
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person(given = "FAST",
            family = "Genomics",
