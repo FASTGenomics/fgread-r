@@ -1,8 +1,10 @@
 reference:
 
 - title: Reading data sets
-  desc: ~
+  desc: >-
+    Functions for loading data sets used in a FASTGenomics analysis.
   contents:
   - 'list_datasets'
   - 'read_dataset'
   - 'read_datasets'
+  - 'DataSet-class'

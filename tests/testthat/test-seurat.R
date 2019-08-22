@@ -19,7 +19,8 @@ Map(
                       seurat <- fgread::read_dataset(dsets_list[[dset$id]])
                       expect_equal(dim(seurat), dset$dim)
                       expect_equal(seurat@project.name, dset$title)
-                      expect_equal(seurat@misc$fg_metadata, dsets_list[[dset$id]]@metadata)
+                      expect_equal(seurat@misc$fastgenomics$metadata, dsets_list[[dset$id]]@metadata)
+                      expect_equal(seurat@misc$fastgenomics$id, dset$id)
                   }))
     },
     DATASETS
