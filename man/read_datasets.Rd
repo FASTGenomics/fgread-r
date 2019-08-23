@@ -2,8 +2,7 @@
 % Please edit documentation in R/read.R
 \name{read_datasets}
 \alias{read_datasets}
-\title{Loads all data sets available for this analysis.  Optionally, you can provide a list
-of data sets to load to load only selected ones.}
+\title{Loads all data sets available for this analysis.}
 \usage{
 read_datasets(data_sets = list_datasets(data_dir),
   readers = DEFAULT_READERS)
@@ -18,8 +17,7 @@ A list of data sets loaded into seurat objects, indexed by data set id (same
 indices as in the \code{\link{list_datasets}}).
 }
 \description{
-Loads all data sets available for this analysis.  Optionally, you can provide a list
-of data sets to load to load only selected ones.
+Optionally, you can provide a list of data sets to load to load only selected ones.
 }
 \examples{
 # loads all data sets as seurat objects

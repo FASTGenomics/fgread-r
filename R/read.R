@@ -39,10 +39,11 @@ setMethod(
     }
 )
 
-#' Lists data sets provided by FASTGenomics.  The optional argument available under
-#' \code{data_dir}.  The function then looks for all directories matching the
-#' \code{".*/dataset_\\d{4}$"} pattern and constructs a \code{DataSet} object from each
-#' of them.
+#' Lists data sets provided by FASTGenomics.
+#'
+#' The optional argument available under \code{data_dir}.  The function then looks for
+#' all directories matching the \code{".*/dataset_\\d{4}$"} pattern and constructs a
+#' \code{DataSet} object from each of them.
 #'
 #' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
 #'     form.  Defaults to the directory provided by the FASTGenomics platform.
@@ -77,8 +78,10 @@ add_metadata <- function(seurat, data_set){
 }
 
 
-#' Reads a single data set, taking a \code{\link{DataSet}} object as an argument.  This
-#' function should be used with conjunction to \code{\link{list_datasets}}.
+#' Reads a single data set.
+#'
+#' Takes a \code{\link{DataSet}} object as an argument.  This function should be used
+#' with conjunction to \code{\link{list_datasets}}.
 #'
 #' @param data_set The data set to load (passed as a DataSet object)
 #'
@@ -116,8 +119,9 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
 }
 
 
-#' Loads all data sets available for this analysis.  Optionally, you can provide a list
-#' of data sets to load to load only selected ones.
+#' Loads all data sets available for this analysis.
+#'
+#' Optionally, you can provide a list of data sets to load to load only selected ones.
 #'
 #' @param data_sets Optional argument with a list of the datasets to load.  Typically a
 #'     list returned by \code{\link{list_datasets}} filtered to include only specific
