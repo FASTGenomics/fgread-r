@@ -2,10 +2,7 @@
 % Please edit documentation in R/read.R
 \name{list_datasets}
 \alias{list_datasets}
-\title{Lists data sets provided by FASTGenomics.  The optional argument available under
-\code{data_dir}.  The function then looks for all directories matching the
-\code{".*/dataset_\\d{4}$"} pattern and constructs a \code{DataSet} object from each
-of them.}
+\title{Lists data sets provided by FASTGenomics.}
 \usage{
 list_datasets(data_dir = DATA_DIR)
 }
@@ -17,10 +14,9 @@ form.  Defaults to the directory provided by the FASTGenomics platform.}
 List of data sets (as \code{DataSet} objects) indexed by data set id.
 }
 \description{
-Lists data sets provided by FASTGenomics.  The optional argument available under
-\code{data_dir}.  The function then looks for all directories matching the
-\code{".*/dataset_\\d{4}$"} pattern and constructs a \code{DataSet} object from each
-of them.
+The optional argument available under \code{data_dir}.  The function then looks for
+all directories matching the \code{".*/dataset_\\d{4}$"} pattern and constructs a
+\code{DataSet} object from each of them.
 }
 \examples{
 dsets_list <- list_datasets()
