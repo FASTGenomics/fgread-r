@@ -42,20 +42,20 @@ like to load.
 
 ### Loading a single data set
 
-To load a single data set use `fgread::load_dataset`.  The code below loads the first
+To load a single data set use `fgread::read_dataset`.  The code below loads the first
 data set from the list (the "Loom data set") and returns a [Seurat][seurat] object
 
 ``` R
-seurat <- fgread::load_dataset(dsets_list[[1]])
+seurat <- fgread::read_dataset(dsets_list[[1]])
 ```
 
 To load the second data set simply run
 
 ``` R
-seurat2 <- fgread::load_dataset(dsets_list[[2]])
+seurat2 <- fgread::read_dataset(dsets_list[[2]])
 ```
 
-The `fgread::load_dataset` function resolves the underlying format of the data set
+The `fgread::read_dataset` function resolves the underlying format of the data set
 automatically, based on the `format` attributes contained in the `dsets_list[[1]]`.
 
 [seurat]: https://satijalab.org/seurat/
@@ -63,12 +63,12 @@ automatically, based on the `format` attributes contained in the `dsets_list[[1]
 ### Loading multiple data sets
 
 Similarly, one can load multiple data sets with a single command:
-`fgread::load_datasets` (note the `s` at the end).  The command loads all available data
+`fgread::read_datasets` (note the `s` at the end).  The command loads all available data
 sets into _separate_ Seurat objects and returns a list of these objects (where the
 indices correspond to the indices from `fgread::list_datasets`).
 
 ``` R
-dsets <- fgread::load_datasets(dsets_list)
+dsets <- fgread::read_datasets(dsets_list)
 ```
 Now the `dsets` is a list containing two Seurat Objects
 
@@ -84,10 +84,10 @@ An object of class Seurat
 Active assay: RNA (33538 features)
 ```
 
-Used without any arguments `fgread::load_datasets()` loads all data sets
+Used without any arguments `fgread::read_datasets()` loads all data sets
 
 ``` R
-dsets <- fgread::load_datasets()
+dsets <- fgread::read_datasets()
 ```
 
 
