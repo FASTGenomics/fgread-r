@@ -139,7 +139,7 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
 #' seurat <- read_datasets(dsets_list[c(1,2)])
 #'
 #' @export
-read_datasets <- function(data_sets=list_datasets(data_dir), readers=DEFAULT_READERS){
+read_datasets <- function(data_sets=list_datasets(DATA_DIR), readers=DEFAULT_READERS){
     loaded = list()
     for (dset in data_sets){
         print(glue::glue('Loading data set "{dset@metadata$title}" in format {dset@metadata$format} from {dset@path}.'))
