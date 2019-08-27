@@ -7,7 +7,7 @@ This package implements convenience functions for loading data sets in the
 will let you list and load data sets for which the analysis was defined.
 
 [fg]: https://beta.fastgenomics.org/webclient/
-[fg]: https://beta.fastgenomics.org/webclient/searchPage/analyses
+[fg_analysis]: https://beta.fastgenomics.org/webclient/searchPage/analyses
 
 ## Usage
 
@@ -105,11 +105,12 @@ Active assay: RNA (33538 features)
 
 # Supported formats
 
-- CellRanger (hdf5), using Seurat implementation
-- Loom, only the count matrix and row/col_attrs components
-- AnnData, only the count matrix and var/obs components
-- Drop-Seq (tsv), only the count matrix, needs lots of memory
-- Seurat Object
+The following formats are supported by this package
+- [AnnData](https://github.com/theislab/anndata)
+- [CellRanger (hdf5)](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/advanced/h5_matrices)
+- [Drop-Seq (tsv)](https://github.com/Hoohm/dropSeqPipe/)
+- [Loom](http://loompy.org/)
+- [Seurat Object](https://satijalab.org/seurat/)
 
 # Known issues
 
