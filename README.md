@@ -128,6 +128,7 @@ Clone the repository along with the test data by running
 
 ``` bash
 git clone git@github.com:FASTGenomics/fgread-r.git
+cd fgread-r
 git submodule init
 git submodule update
 ```
@@ -147,5 +148,5 @@ devtools::install_deps(upgrade="never")
 Once the dependencies are there you can run the tests with
 
 ``` R
-testthat::test()
+devtools::test()
 ```
