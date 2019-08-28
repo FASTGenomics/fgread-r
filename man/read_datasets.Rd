@@ -4,7 +4,7 @@
 \alias{read_datasets}
 \title{Loads all datasets available for this analysis.}
 \usage{
-read_datasets(data_sets = get_datasets(data_dir),
+read_datasets(data_sets = get_datasets(DATA_DIR),
   readers = DEFAULT_READERS)
 }
 \arguments{
