@@ -30,7 +30,7 @@ read_seurat_to_seurat <- function(data_set){
 #' and the row/col attributes that can fit in a data frame structure (i.e.. all higher
 #' dimensional attributes are discarded).  To keep the implementation simple we read the
 #' whole object into memory, including the dense count matrix.  This could be a
-#' potential bottleneck for larger data sets but can be optimized later.
+#' potential bottleneck for larger datasets but can be optimized later.
 read_loom_to_seurat <- function(data_set){
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
@@ -87,7 +87,7 @@ read_10xhdf5_to_seurat <- function(data_set){
     return(seurat)
 }
 
-#' here we need to unpack the data set before reading it
+#' here we need to unpack the dataset before reading it
 read_dropseqtsv_to_seurat <- function(data_set){
     file <- data_set@file
     x <- data.table::fread(file, sep="\t", header=F, skip=1, na.strings=NULL)

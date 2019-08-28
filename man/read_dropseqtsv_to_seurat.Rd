@@ -2,10 +2,10 @@
 % Please edit documentation in R/readers.R
 \name{read_dropseqtsv_to_seurat}
 \alias{read_dropseqtsv_to_seurat}
-\title{here we need to unpack the data set before reading it}
+\title{here we need to unpack the dataset before reading it}
 \usage{
 read_dropseqtsv_to_seurat(data_set)
 }
 \description{
-here we need to unpack the data set before reading it
+here we need to unpack the dataset before reading it
 }
