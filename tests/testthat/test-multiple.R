@@ -1,9 +1,9 @@
-context("Loading multiple data sets")
+context("Loading multiple datasets")
 
 DATADIR <- "../data/readers"
 
-test_that("Loading multiple data sets", suppressWarnings({
-    dsets_list <- fgread::list_datasets(data_dir=DATADIR)
+test_that("Loading multiple datasets", suppressWarnings({
+    dsets_list <- fgread::get_datasets(data_dir=DATADIR)
     sel <- c(1,2,3)
     dsets <- fgread::read_datasets(dsets_list[sel])
 

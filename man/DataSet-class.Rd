@@ -3,22 +3,22 @@
 \docType{class}
 \name{DataSet-class}
 \alias{DataSet-class}
-\title{This class stores the information about a data set.}
+\title{This class stores the information about a dataset.}
 \description{
-This class stores the information about a data set.
+This class stores the information about a dataset.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{path}}{Path to the data set, typically of the form
+\item{\code{path}}{Path to the dataset, typically of the form
 \code{"/fastgenomics/data/dataset_xxxx"}}
 
-\item{\code{id}}{Id of the data set.  Defined as the \code{xxxx} part of the directory
-\code{".../dataset_xxxx"} under which the data set is stored.)}
+\item{\code{id}}{Id of the dataset.  Defined as the \code{xxxx} part of the directory
+\code{".../dataset_xxxx"} under which the dataset is stored.)}
 
 \item{\code{metadata}}{Information extracted from \code{.../dataset_xxxx/dataset_info.json}}
 
-\item{\code{file}}{Absolute path to the file under which the data set is stored, something
+\item{\code{file}}{Absolute path to the file under which the dataset is stored, something
 like \code{".../dataset_xxxx/data.loom"}.}
 }}
 

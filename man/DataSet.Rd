@@ -2,12 +2,12 @@
 % Please edit documentation in R/read.R
 \name{DataSet}
 \alias{DataSet}
-\title{constructor for the DataSet Object, takes data set path and extracts all information
+\title{constructor for the DataSet Object, takes dataset path and extracts all information
 from it.}
 \usage{
 DataSet(path)
 }
 \description{
-constructor for the DataSet Object, takes data set path and extracts all information
+constructor for the DataSet Object, takes dataset path and extracts all information
 from it.
 }

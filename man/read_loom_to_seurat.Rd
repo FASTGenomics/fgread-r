@@ -7,7 +7,7 @@ Seurat object so we have to implement our own.  This one only reads the count ta
 and the row/col attributes that can fit in a data frame structure (i.e.. all higher
 dimensional attributes are discarded).  To keep the implementation simple we read the
 whole object into memory, including the dense count matrix.  This could be a
-potential bottleneck for larger data sets but can be optimized later.}
+potential bottleneck for larger datasets but can be optimized later.}
 \usage{
 read_loom_to_seurat(data_set)
 }
@@ -17,5 +17,5 @@ Seurat object so we have to implement our own.  This one only reads the count ta
 and the row/col attributes that can fit in a data frame structure (i.e.. all higher
 dimensional attributes are discarded).  To keep the implementation simple we read the
 whole object into memory, including the dense count matrix.  This could be a
-potential bottleneck for larger data sets but can be optimized later.
+potential bottleneck for larger datasets but can be optimized later.
 }
