@@ -94,12 +94,23 @@ read_10xhdf5_to_seurat <- function(data_set){
     return(seurat)
 }
 
+#' Read dense matrix in csv form
+read_densecsv_to_seurat <- function(data_set){
+    return(read_densemat_to_seurat(data_set, ","))
+}
+
+#' Read dense matrix in tsv form
+read_densetsv_to_seurat <- function(data_set){
+    return(read_densemat_to_seurat(data_set, "\t"))
+}
+
+#' Read dense matrix
 #' here we need to unpack the dataset before reading it
-read_dropseqtsv_to_seurat <- function(data_set){
+read_densemat_to_seurat <- function(data_set, sep){
     file <- data_set@file
-    x <- data.table::fread(file, sep="\t", header=F, skip=1, na.strings=NULL)
+    x <- data.table::fread(file, sep=sep, header=F, skip=1, na.strings=NULL)
     genes <- x[[1]]
-    cells <- colnames(data.table::fread(file, sep="\t", header=T, nrows=0))
+    cells <- colnames(data.table::fread(file, sep=sep, header=T, nrows=0))
     cells <- tail(cells, dim(x)[[2]]-1) # ignore column name of genes, if present
     matrix <- as.matrix(x[,2:dim(x)[2]])
     dimnames(matrix) <- list(genes, cells)
@@ -113,5 +124,6 @@ DEFAULT_READERS <- list(
     "Seurat Object"=read_seurat_to_seurat,
     "AnnData"=read_anndata_to_seurat,
     "10x (hdf5)"=read_10xhdf5_to_seurat,
-    "Drop-Seq (tsv)"=read_dropseqtsv_to_seurat
+    "tab-separated text"= read_densetsv_to_seurat,
+    "comma-separated text"= read_densecsv_to_seurat
 )
