@@ -100,6 +100,7 @@ read_dropseqtsv_to_seurat <- function(data_set){
     x <- data.table::fread(file, sep="\t", header=F, skip=1, na.strings=NULL)
     genes <- x[[1]]
     cells <- colnames(data.table::fread(file, sep="\t", header=T, nrows=0))
+    cells <- tail(cells, dim(x)[[2]]-1) # ignore column name of genes, if present
     matrix <- as.matrix(x[,2:dim(x)[2]])
     dimnames(matrix) <- list(genes, cells)
     spmatrix <- Matrix::Matrix(matrix, sparse=T)
