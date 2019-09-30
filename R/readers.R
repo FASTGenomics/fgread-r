@@ -88,21 +88,42 @@ read_anndata_to_seurat <- function(data_set){
     return(matrix_to_seurat(matrix, cell_metadata, gene_metadata))
 }
 
+
 read_10xhdf5_to_seurat <- function(data_set){
     matrix <- Seurat::Read10X_h5(data_set@file)
     seurat <- Seurat::CreateSeuratObject(counts=matrix, min.cells=0, min.features=0)
     return(seurat)
 }
 
+
+read_10xmtx_to_seurat <- function(data_set){
+  list_files <- list.files(data_set@path)
+  suffix <- tail(list_files[[1]], 3)
+  if(suffix == '.gz'){
+    data <- Seurat::Read10X(data.dir = data_dir)
+    seurat <- Seurat::CreateSeuratObject(
+      counts = data$`Gene Expression`, min.cells=0, min.features=0)
+  }
+  else{
+    expression_matrix <- Seurat::Read10X(data.dir = data_set@path)
+    seurat <- Seurat::CreateSeuratObject(
+      counts = expression_matrix, min.cells=0, min.features=0)  
+  }
+  return(seurat)
+}
+
+
 #' Read dense matrix in csv form
 read_densecsv_to_seurat <- function(data_set){
     return(read_densemat_to_seurat(data_set, ","))
 }
 
+
 #' Read dense matrix in tsv form
 read_densetsv_to_seurat <- function(data_set){
     return(read_densemat_to_seurat(data_set, "\t"))
 }
+
 
 #' Read dense matrix
 #' here we need to unpack the dataset before reading it
@@ -119,11 +140,13 @@ read_densemat_to_seurat <- function(data_set, sep){
     return(seurat)
 }
 
+
 DEFAULT_READERS <- list(
     "Loom"=read_loom_to_seurat,
     "Seurat Object"=read_seurat_to_seurat,
     "AnnData"=read_anndata_to_seurat,
     "10x (hdf5)"=read_10xhdf5_to_seurat,
+    "10x (mtx)"=read_10xmtx_to_seurat,
     "tab-separated text"= read_densetsv_to_seurat,
     "comma-separated text"= read_densecsv_to_seurat
 )
