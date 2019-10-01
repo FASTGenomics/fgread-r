@@ -1,5 +1,11 @@
 reference:
 
+- title: Printing available datasets
+  desc: >- 
+    A function to print all available datasets.
+  contents:
+  - 'prints_datasets'
+
 - title: Reading datasets
   desc: >-
     Functions for loading datasets used in a FASTGenomics analysis.
@@ -8,3 +14,16 @@ reference:
   - 'read_dataset'
   - 'read_datasets'
   - 'DataSet-class'
+  
+- title: Available readers
+  desc: >-
+    Description of the default readers.
+  contents:
+  - 'read_anndata_to_seurat'
+  - 'read_densemat_to_seurat'
+  - 'read_loom_to_seurat'
+  - 'read_densecsv_to_seurat'
+  - 'read_densetsv_to_seurat'
+  - 'read_seurat_to_seurat'
+  - 'read_10xhdf5_to_seurat'
+  - 'read_10xmtx_to_seurat'
