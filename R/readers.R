@@ -19,7 +19,7 @@ matrix_to_seurat <- function(matrix, cell_metadata, gene_metadata){
     return(seurat)
 }
 
-
+#' Read a Seurat object.
 read_seurat_to_seurat <- function(data_set){
     return(readRDS(data_set@file))
 }
@@ -96,6 +96,8 @@ read_anndata_to_seurat <- function(data_set){
 }
 
 
+
+#' Read 10x hdf5 dataset into seurat.
 read_10xhdf5_to_seurat <- function(data_set){
     matrix <- Seurat::Read10X_h5(data_set@file)
     seurat <- Seurat::CreateSeuratObject(counts=matrix, min.cells=0, min.features=0)
@@ -103,6 +105,7 @@ read_10xhdf5_to_seurat <- function(data_set){
 }
 
 
+#'read_10xhdf5_to_seuratad 10x mtx (mex) dataset to seurat.
 read_10xmtx_to_seurat <- function(data_set){
   list_files <- list.files(data_set@path)
   suffix <- tail(list_files[[1]], 3)

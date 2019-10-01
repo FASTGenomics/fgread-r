@@ -106,11 +106,27 @@ Active assay: RNA (33538 features)
 # Supported formats
 
 The following formats are supported by this package
-- [AnnData](https://github.com/theislab/anndata)
+- [AnnData](https://github.com/theislab/anndata) (Experimental, see below)
 - [CellRanger (hdf5)](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/advanced/h5_matrices)
-- [Drop-Seq (tsv)](https://github.com/Hoohm/dropSeqPipe/)
-- [Loom](http://loompy.org/)
+- tab-separated text
+- comma-separated text
+- [Loom](http://loompy.org/) (Experimenta, see below)
 - [Seurat Object](https://satijalab.org/seurat/)
+
+## Limitations of readers
+
+### AnnData
+Importing AnnData is not generally available in Seurat v3.
+Import of AnnData only works if there is a CSR matrix in the AnnData object.
+For your convenience the FASTGenomics team provides this beta loading routine.
+However, be carefull.
+
+### Loom
+Importing loom files is currently unavailable in Seurat v3
+The beta loader provided by our team only reads the count table
+and the row/col attributes that can fit in a data frame structure (i.e.. all higher
+dimensional attributes are discarded).
+
 
 # Known issues
 
