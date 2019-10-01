@@ -4,7 +4,7 @@ reference:
   desc: >- 
     A function to print all available datasets.
   contents:
-  - 'prints_datasets'
+  - 'print_datasets'
   
 - title: Reading datasets
   desc: >-
