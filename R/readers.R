@@ -25,13 +25,20 @@ read_seurat_to_seurat <- function(data_set){
 }
 
 
-#' Unfortunaly there is no Seurat function that straight up reads the loom file into a
-#' Seurat object so we have to implement our own.  This one only reads the count table
+#' Importing loom files is currently unavailable in Seurat v3
+#' This beta loader provided by our team only reads the count table
 #' and the row/col attributes that can fit in a data frame structure (i.e.. all higher
 #' dimensional attributes are discarded).  To keep the implementation simple we read the
 #' whole object into memory, including the dense count matrix.  This could be a
 #' potential bottleneck for larger datasets but can be optimized later.
 read_loom_to_seurat <- function(data_set){
+  
+  warning("
+          !! Importing loom files is currently unavailable in Seurat v3 !! 
+          For your convenience the FASTGenomics team provides this beta loading routine. 
+          In case of problems please consider using another format.",
+          call. = TRUE, immediate. = TRUE)
+    
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
     rhdf5::H5Fclose(file)
@@ -63,6 +70,13 @@ read_loom_to_seurat <- function(data_set){
 #' this only works if there's a CSR matrix in the AnnData object.  We would be happy to
 #' use the Seurats ReadH5AD function but it's broken.
 read_anndata_to_seurat <- function(data_set){
+  
+  warning("
+          !! Importing AnnData is not generally available in Seurat v3 !! 
+          Import of AnnData only works if there is a CSR matrix in the AnnData object.
+          For your convenience the FASTGenomics team provides this beta loading routine.",
+          call. = TRUE, immediate. = TRUE)
+  
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
     rhdf5::H5Fclose(file)
@@ -81,18 +95,51 @@ read_anndata_to_seurat <- function(data_set){
     return(matrix_to_seurat(matrix, cell_metadata, gene_metadata))
 }
 
+
 read_10xhdf5_to_seurat <- function(data_set){
     matrix <- Seurat::Read10X_h5(data_set@file)
     seurat <- Seurat::CreateSeuratObject(counts=matrix, min.cells=0, min.features=0)
     return(seurat)
 }
 
+
+read_10xmtx_to_seurat <- function(data_set){
+  list_files <- list.files(data_set@path)
+  suffix <- tail(list_files[[1]], 3)
+  if(suffix == '.gz'){
+    data <- Seurat::Read10X(data.dir = data_dir)
+    seurat <- Seurat::CreateSeuratObject(
+      counts = data$`Gene Expression`, min.cells=0, min.features=0)
+  }
+  else{
+    expression_matrix <- Seurat::Read10X(data.dir = data_set@path)
+    seurat <- Seurat::CreateSeuratObject(
+      counts = expression_matrix, min.cells=0, min.features=0)  
+  }
+  return(seurat)
+}
+
+
+#' Read dense matrix in csv form
+read_densecsv_to_seurat <- function(data_set){
+    return(read_densemat_to_seurat(data_set, ","))
+}
+
+
+#' Read dense matrix in tsv form
+read_densetsv_to_seurat <- function(data_set){
+    return(read_densemat_to_seurat(data_set, "\t"))
+}
+
+
+#' Read dense matrix
 #' here we need to unpack the dataset before reading it
-read_dropseqtsv_to_seurat <- function(data_set){
+read_densemat_to_seurat <- function(data_set, sep){
     file <- data_set@file
-    x <- data.table::fread(file, sep="\t", header=F, skip=1, na.strings=NULL)
+    x <- data.table::fread(file, sep=sep, header=F, skip=1, na.strings=NULL)
     genes <- x[[1]]
-    cells <- colnames(data.table::fread(file, sep="\t", header=T, nrows=0))
+    cells <- colnames(data.table::fread(file, sep=sep, header=T, nrows=0))
+    cells <- tail(cells, dim(x)[[2]]-1) # ignore column name of genes, if present
     matrix <- as.matrix(x[,2:dim(x)[2]])
     dimnames(matrix) <- list(genes, cells)
     spmatrix <- Matrix::Matrix(matrix, sparse=T)
@@ -100,10 +147,13 @@ read_dropseqtsv_to_seurat <- function(data_set){
     return(seurat)
 }
 
+
 DEFAULT_READERS <- list(
     "Loom"=read_loom_to_seurat,
     "Seurat Object"=read_seurat_to_seurat,
     "AnnData"=read_anndata_to_seurat,
     "10x (hdf5)"=read_10xhdf5_to_seurat,
-    "Drop-Seq (tsv)"=read_dropseqtsv_to_seurat
+    "10x (mtx)"=read_10xmtx_to_seurat,
+    "tab-separated text"= read_densetsv_to_seurat,
+    "comma-separated text"= read_densecsv_to_seurat
 )
