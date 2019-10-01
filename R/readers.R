@@ -70,6 +70,13 @@ read_loom_to_seurat <- function(data_set){
 #' this only works if there's a CSR matrix in the AnnData object.  We would be happy to
 #' use the Seurats ReadH5AD function but it's broken.
 read_anndata_to_seurat <- function(data_set){
+  
+  warning("
+          !! Importing AnnData is not generally available in Seurat v3 !! 
+          Import of AnnData only works if there is a CSR matrix in the AnnData object.
+          For your convenience the FASTGenomics team provides this beta loading routine.",
+          call. = TRUE, immediate. = TRUE)
+  
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
     contents <- rhdf5::h5dump(file)
     rhdf5::H5Fclose(file)
