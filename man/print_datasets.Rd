@@ -2,10 +2,10 @@
 % Please edit documentation in R/read.R
 \name{print_datasets}
 \alias{print_datasets}
-\title{Prints the list of available data sets'}
+\title{Prints the list of available datasets'}
 \usage{
 print_datasets(data_dir = DATA_DIR)
 }
 \description{
-Prints the list of available data sets'
+Prints the list of available datasets'
 }

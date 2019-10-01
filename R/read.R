@@ -67,7 +67,7 @@ get_datasets <- function(data_dir=DATA_DIR){
     return(data_sets)
 }
 
-#' Prints the list of available data sets'
+#' Prints the list of available datasets'
 print_datasets <- function(data_dir=DATA_DIR){
     datasets <- get_datasets(data_dir=data_dir)
 
