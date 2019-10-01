@@ -5,7 +5,7 @@ reference:
     A function to print all available datasets.
   contents:
   - 'prints_datasets'
-
+  
 - title: Reading datasets
   desc: >-
     Functions for loading datasets used in a FASTGenomics analysis.
