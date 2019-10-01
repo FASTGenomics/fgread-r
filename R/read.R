@@ -112,6 +112,9 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
         stop(glue::glue('The format of the dataset "{data_set@metadata$title}" is "{format}".  Please specify the data format in the Details of this dataset if you can modify the dataset or ask the dataset owner to do that.'))
     }
     else if(format %in% names(readers)){
+        title <- data_set@metadata$title
+        path <- data_set@path
+        print(glue::glue('Loading dataset "{title}" in format "{format}" from directory "{path}"...'))
         seurat <- readers[[format]](data_set)
 
         ## Calling this function here provides compatibility between various readers,
@@ -119,6 +122,9 @@ read_dataset <- function(data_set, readers=DEFAULT_READERS){
         ## On the downside, with custom readers this may lead to overwriting
         ## user-defined data in the seurat object.
         seurat <- add_metadata(seurat, data_set)
+        n_genes <- dim(seurat)[[1]]
+        n_cells <- dim(seurat)[[2]]
+        print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells'))
         return(seurat)
     } else {
         stop(glue::glue('Unsupported format: "{format}".'))

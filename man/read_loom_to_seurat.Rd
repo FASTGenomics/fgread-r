@@ -2,8 +2,8 @@
 % Please edit documentation in R/readers.R
 \name{read_loom_to_seurat}
 \alias{read_loom_to_seurat}
-\title{Unfortunaly there is no Seurat function that straight up reads the loom file into a
-Seurat object so we have to implement our own.  This one only reads the count table
+\title{Importing loom files is currently unavailable in Seurat v3
+This beta loader provided by our team only reads the count table
 and the row/col attributes that can fit in a data frame structure (i.e.. all higher
 dimensional attributes are discarded).  To keep the implementation simple we read the
 whole object into memory, including the dense count matrix.  This could be a
@@ -12,8 +12,8 @@ potential bottleneck for larger datasets but can be optimized later.}
 read_loom_to_seurat(data_set)
 }
 \description{
-Unfortunaly there is no Seurat function that straight up reads the loom file into a
-Seurat object so we have to implement our own.  This one only reads the count table
+Importing loom files is currently unavailable in Seurat v3
+This beta loader provided by our team only reads the count table
 and the row/col attributes that can fit in a data frame structure (i.e.. all higher
 dimensional attributes are discarded).  To keep the implementation simple we read the
 whole object into memory, including the dense count matrix.  This could be a

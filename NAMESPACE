@@ -3,4 +3,3 @@
 export(get_datasets)
 export(read_dataset)
 export(read_datasets)
-export(print_datasets)
