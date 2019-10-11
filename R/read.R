@@ -101,9 +101,11 @@ add_metadata <- function(seurat, data_set){
 #' read_dataset(dsets_list[[1]])  # returns the Seurat object constructed from the first dataset
 #'
 #' @export
-read_dataset <- function(data_set, readers=DEFAULT_READERS){
+read_dataset <- function(data_set, additional_readers=list()){
     force(data_set)
     format <- data_set@metadata$format
+
+    readers <- utils::modifyList(DEFAULT_READERS, additional_readers)
 
     ## find a matching reader
     supported_readers_str <- paste(names(readers), collapse=", ")
