@@ -4,7 +4,8 @@
 \alias{read_dataset}
 \title{Reads a single dataset.}
 \usage{
-read_dataset(data_set, readers = DEFAULT_READERS)
+read_dataset(data_set, additional_readers = list(),
+  experimental_readers = F)
 }
 \arguments{
 \item{data_set}{The dataset to load (passed as a DataSet object)}
@@ -13,7 +14,7 @@ read_dataset(data_set, readers = DEFAULT_READERS)
 dataset loaded as a Seurat Object
 }
 \description{
-Takes a \code{\link{DataSet}} object as an argument.  This function should be used
+Takes a \code{\link{DataSet}} object as an argument. This function should be used
 with conjunction to \code{\link{get_datasets}}.
 }
 \examples{

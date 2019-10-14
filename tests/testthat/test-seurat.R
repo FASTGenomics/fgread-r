@@ -20,7 +20,7 @@ Map(
         test_that(glue::glue("Format {dset$format} loads"),
                   suppressWarnings({
                       dsets_list <- fgread::get_datasets(data_dir=DATADIR)
-                      seurat <- fgread::read_dataset(dsets_list[[dset$id]])
+                      seurat <- fgread::read_dataset(dsets_list[[dset$id]], experimental_readers=T)
                       expect_equal(dim(seurat), dset$dim)
                       expect_equal(seurat@project.name, dset$title)
                       expect_equal(seurat@misc$fastgenomics$metadata, dsets_list[[dset$id]]@metadata)

@@ -2,16 +2,16 @@
 % Please edit documentation in R/readers.R
 \name{read_anndata_to_seurat}
 \alias{read_anndata_to_seurat}
-\title{Read AnnData to Seurat.
-Importing AnnData is not generally available in Seurat v3
-mport of AnnData only works if there is a CSR matrix in the AnnData object.
-For your convenience the FASTGenomics team provides this beta loading routine.}
+\title{Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
+Pleas enote that this might not work as expected.
+For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
+in \code{\link{read_datasets}} or \code{\link{read_dataset}}.}
 \usage{
 read_anndata_to_seurat(data_set)
 }
 \description{
-Read AnnData to Seurat.
-Importing AnnData is not generally available in Seurat v3
-mport of AnnData only works if there is a CSR matrix in the AnnData object.
-For your convenience the FASTGenomics team provides this beta loading routine.
+Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
+Pleas enote that this might not work as expected.
+For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
+in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
 }

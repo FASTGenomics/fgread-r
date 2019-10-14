@@ -24,19 +24,28 @@ read_seurat_to_seurat <- function(data_set){
     return(readRDS(data_set@file))
 }
 
+#' Reading a loom dataset currently not implemented in Seurat v3.
+#' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
+#' in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
+read_loom_to_seurat <- function(data_set){
+    stop(glue::glue(
+        'Loading of loom files is currently not supported in Seurat v3. ',
+        'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
+        'For more information please see {BLOGURL}.'))
+}
 
 #' Importing loom files is currently unavailable in Seurat v3
 #' This beta loader provided by our team only reads the count table
-#' and the row/col attributes that can fit in a data frame structure (i.e.. all higher
-#' dimensional attributes are discarded).  To keep the implementation simple we read the
+#' and the row/col attributes that can fit in a data frame structure (i.e. all higher
+#' dimensional attributes are discarded). To keep the implementation simple we read the
 #' whole object into memory, including the dense count matrix.  This could be a
-#' potential bottleneck for larger datasets but can be optimized later.
-read_loom_to_seurat <- function(data_set){
+#' potential bottleneck for larger datasets.
+read_loom_to_seurat_exp <- function(data_set){
   
   warning("
           !! Importing loom files is currently unavailable in Seurat v3 !! 
           For your convenience the FASTGenomics team provides this beta loading routine. 
-          In case of problems please consider using another format.",
+          In case of problems please consider using another format or implement your own loading routine.\n",
           call. = TRUE, immediate. = TRUE)
     
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
@@ -66,17 +75,25 @@ read_loom_to_seurat <- function(data_set){
     return(matrix_to_seurat(matrix, cell_metadata, gene_metadata))
 }
 
+#' Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
+#' Pleas enote that this might not work as expected.
+#' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
+#' in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
+read_anndata_to_seurat <- function(data_set){
+    return(Seurat::ReadH5AD(data_set@file))
+}
+
 
 #' Read AnnData to Seurat.
-#' Importing AnnData is not generally available in Seurat v3 
-#' mport of AnnData only works if there is a CSR matrix in the AnnData object.
+#' Importing AnnData is not always working as expected in Seurat v3 
 #' For your convenience the FASTGenomics team provides this beta loading routine.
-read_anndata_to_seurat <- function(data_set){
+#' Import of AnnData only works if there is a CSR matrix in the AnnData object.
+read_anndata_to_seurat_exp <- function(data_set){
   
   warning("
           !! Importing AnnData is not generally available in Seurat v3 !! 
           Import of AnnData only works if there is a CSR matrix in the AnnData object.
-          For your convenience the FASTGenomics team provides this beta loading routine.",
+          For your convenience the FASTGenomics team provides this beta loading routine.\n",
           call. = TRUE, immediate. = TRUE)
   
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
@@ -161,4 +178,9 @@ DEFAULT_READERS <- list(
     "10x (mtx)"=read_10xmtx_to_seurat,
     "tab-separated text"= read_densetsv_to_seurat,
     "comma-separated text"= read_densecsv_to_seurat
+)
+
+EXPERIMENTAL_READERS <- list(
+    "AnnData"=read_anndata_to_seurat_exp,
+    "Loom"=read_loom_to_seurat_exp
 )
