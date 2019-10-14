@@ -5,19 +5,20 @@
 \title{Loads all datasets available for this analysis.}
 \usage{
 read_datasets(data_sets = get_datasets(DATA_DIR),
-  readers = DEFAULT_READERS)
+  additional_readers = list(), experimental_readers = F)
 }
 \arguments{
 \item{data_sets}{Optional argument with a list of the datasets to load.  Typically a
 list returned by \code{\link{get_datasets}} filtered to include only specific
-datasets.}
+datasets. You can also pass a single dataset.}
 }
 \value{
 A list of datasets loaded into seurat objects, indexed by dataset id (same
-indices as in the \code{\link{get_datasets}}).
+indices as in the \code{\link{get_datasets}}). When you pass a single dataset to the function
+a single Seurat object is returned.
 }
 \description{
-Optionally, you can provide a list of datasets to load to load only selected ones.
+Optionally, you can provide a list of datasets or a single dataset to load to load only selected ones.
 }
 \examples{
 # loads all datasets as seurat objects
@@ -26,5 +27,8 @@ seurat <- read_datasets()
 # loads only the first and second datasets
 dsets_list <- get_datasets()
 seurat <- read_datasets(dsets_list[c(1,2)])
+
+# loads only the firt dataset and returns a Seurat object
+seurat <- read_datasets(dsets_list[[1]])
 
 }
