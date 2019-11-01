@@ -2,10 +2,10 @@
 % Please edit documentation in R/readers.R
 \name{read_10xmtx_to_seurat}
 \alias{read_10xmtx_to_seurat}
-\title{read_10xhdf5_to_seuratad 10x mtx (mex) dataset to seurat.}
+\title{Read 10x mtx (mex) dataset to seurat.}
 \usage{
 read_10xmtx_to_seurat(data_set)
 }
 \description{
-read_10xhdf5_to_seuratad 10x mtx (mex) dataset to seurat.
+Read 10x mtx (mex) dataset to seurat.
 }

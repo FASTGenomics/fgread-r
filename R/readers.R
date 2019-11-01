@@ -42,10 +42,10 @@ read_loom_to_seurat <- function(data_set){
 #' potential bottleneck for larger datasets.
 read_loom_to_seurat_exp <- function(data_set){
   
-  warning("
-          !! Importing loom files is currently unavailable in Seurat v3 !! 
-          For your convenience the FASTGenomics team provides this beta loading routine. 
-          In case of problems please consider using another format or implement your own loading routine.\n",
+  warning(
+      "!! Importing loom files is currently unavailable in Seurat v3 !!",
+      "For your convenience the FASTGenomics team provides this beta loading routine. ",
+      "In case of problems please consider using another format or implement your own loading routine.\n",
           call. = TRUE, immediate. = TRUE)
     
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
@@ -90,10 +90,10 @@ read_anndata_to_seurat <- function(data_set){
 #' Import of AnnData only works if there is a CSR matrix in the AnnData object.
 read_anndata_to_seurat_exp <- function(data_set){
   
-  warning("
-          !! Importing AnnData is not generally available in Seurat v3 !! 
-          Import of AnnData only works if there is a CSR matrix in the AnnData object.
-          For your convenience the FASTGenomics team provides this beta loading routine.\n",
+  warning(
+      "!! Importing AnnData is not generally available in Seurat v3 !!",
+      "Import of AnnData only works if there is a CSR matrix in the AnnData object.",
+      "For your convenience the FASTGenomics team provides this beta loading routine.\n",
           call. = TRUE, immediate. = TRUE)
   
     file <- rhdf5::H5Fopen(data_set@file, flags="H5F_ACC_RDONLY")
@@ -124,7 +124,7 @@ read_10xhdf5_to_seurat <- function(data_set){
 }
 
 
-#'read_10xhdf5_to_seuratad 10x mtx (mex) dataset to seurat.
+#' Read 10x mtx (mex) dataset to seurat.
 read_10xmtx_to_seurat <- function(data_set){
   list_files <- list.files(data_set@path)
   suffix <- tail(list_files[[1]], 3)
