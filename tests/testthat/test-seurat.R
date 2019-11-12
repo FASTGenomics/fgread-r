@@ -1,6 +1,6 @@
 context("Loading into Seurat")
 
-DATADIR <- "../data/readers"
+DATADIR <- "../data/all_datasets"
 
 ## list
 DATASETS <- list(

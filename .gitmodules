@@ -1,4 +1,4 @@
 [submodule "tests/data"]
 	path = tests/data
-	url = https://github.com/FASTGenomics/internal-test-data.git
+	url = https://github.com/FASTGenomics/test-data.git
 

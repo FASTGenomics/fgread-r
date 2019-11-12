@@ -1,6 +1,6 @@
 context("Loading multiple datasets")
 
-DATADIR <- "../data/readers"
+DATADIR <- "../data/all_datasets"
 
 test_that("Loading multiple datasets", suppressWarnings({
     dsets_list <- fgread::get_datasets(data_dir=DATADIR)
