@@ -95,7 +95,7 @@ read_anndata_to_seurat <- function(data_set) {
 read_anndata_to_seurat_exp <- function(data_set) {
 
   warning(
-      "!! Importing AnnDalways working as expected in Seurat v3eurat v3 !!. ",
+      "!! Importing AnnData is not always working as expected in Seurat v3. ",
       "For your convenience the FASTGenomics team provides this beta loading routine.\n",
           call. = TRUE, immediate. = TRUE)
 
