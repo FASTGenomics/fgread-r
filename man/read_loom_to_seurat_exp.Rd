@@ -2,8 +2,9 @@
 % Please edit documentation in R/readers.R
 \name{read_loom_to_seurat_exp}
 \alias{read_loom_to_seurat_exp}
-\title{Importing loom files is currently unavailable in Seurat v3
-This beta loader provided by our team only reads the count table
+\title{Read a loom dataset with the experimental FASTGenomics reader.
+Importing loom files is currently unavailable in Seurat v3.
+This beta loader provided by FASTGenomics only reads the count table
 and the row/col attributes that can fit in a data frame structure (i.e. all higher
 dimensional attributes are discarded). To keep the implementation simple we read the
 whole object into memory, including the dense count matrix.  This could be a
@@ -12,8 +13,9 @@ potential bottleneck for larger datasets.}
 read_loom_to_seurat_exp(data_set)
 }
 \description{
-Importing loom files is currently unavailable in Seurat v3
-This beta loader provided by our team only reads the count table
+Read a loom dataset with the experimental FASTGenomics reader.
+Importing loom files is currently unavailable in Seurat v3.
+This beta loader provided by FASTGenomics only reads the count table
 and the row/col attributes that can fit in a data frame structure (i.e. all higher
 dimensional attributes are discarded). To keep the implementation simple we read the
 whole object into memory, including the dense count matrix.  This could be a

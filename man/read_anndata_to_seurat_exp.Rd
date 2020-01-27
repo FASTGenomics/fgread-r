@@ -2,7 +2,7 @@
 % Please edit documentation in R/readers.R
 \name{read_anndata_to_seurat_exp}
 \alias{read_anndata_to_seurat_exp}
-\title{Read AnnData to Seurat.
+\title{Read AnnData to Seurat with experimental FASTGenomics reader.
 Importing AnnData is not always working as expected in Seurat v3
 For your convenience the FASTGenomics team provides this beta loading routine.
 Import of AnnData only works if there is a CSR matrix in the AnnData object.}
@@ -10,7 +10,7 @@ Import of AnnData only works if there is a CSR matrix in the AnnData object.}
 read_anndata_to_seurat_exp(data_set)
 }
 \description{
-Read AnnData to Seurat.
+Read AnnData to Seurat with experimental FASTGenomics reader.
 Importing AnnData is not always working as expected in Seurat v3
 For your convenience the FASTGenomics team provides this beta loading routine.
 Import of AnnData only works if there is a CSR matrix in the AnnData object.

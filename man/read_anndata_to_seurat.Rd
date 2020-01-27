@@ -3,7 +3,7 @@
 \name{read_anndata_to_seurat}
 \alias{read_anndata_to_seurat}
 \title{Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
-Pleas enote that this might not work as expected.
+Please note that this might not work as expected.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 in \code{\link{read_datasets}} or \code{\link{read_dataset}}.}
 \usage{
@@ -11,7 +11,7 @@ read_anndata_to_seurat(data_set)
 }
 \description{
 Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
-Pleas enote that this might not work as expected.
+Please note that this might not work as expected.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
 }

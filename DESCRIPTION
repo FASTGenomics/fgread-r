@@ -1,6 +1,6 @@
 Package: fgread
 Title: FASTGenomics read module for R
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     person(given = "FAST",
            family = "Genomics",
@@ -18,6 +18,6 @@ Imports:
     Seurat,
     glue
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 Suggests: 
     testthat (>= 2.1.0)

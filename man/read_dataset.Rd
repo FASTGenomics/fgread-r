@@ -4,8 +4,7 @@
 \alias{read_dataset}
 \title{Reads a single dataset.}
 \usage{
-read_dataset(data_set, additional_readers = list(),
-  experimental_readers = F)
+read_dataset(data_set, additional_readers = list(), experimental_readers = F)
 }
 \arguments{
 \item{data_set}{The dataset to load (passed as a DataSet object)}

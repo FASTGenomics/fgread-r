@@ -81,19 +81,21 @@ read_loom_to_seurat_exp <- function(data_set) {
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 #' in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
 read_anndata_to_seurat <- function(data_set) {
+  stop(glue::glue('!!Importing AnnData is not always working as expected in Seurat v3 .',
+        'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
+        'For more information please see {BLOGURL}.'))
   return(Seurat::ReadH5AD(data_set@file))
 }
 
 
 #' Read AnnData to Seurat with experimental FASTGenomics reader.
-#' Importing AnnData is not always working as expected in Seurat v3 
+#' Importing AnnData is not always working as expected in Seurat v3
 #' For your convenience the FASTGenomics team provides this beta loading routine.
 #' Import of AnnData only works if there is a CSR matrix in the AnnData object.
 read_anndata_to_seurat_exp <- function(data_set) {
 
   warning(
-      "!! Importing AnnData is not generally available in Seurat v3 !! ",
-      "Import of AnnData only works if there is a CSR matrix in the AnnData object. ",
+      "!! Importing AnnDalways working as expected in Seurat v3eurat v3 !!. ",
       "For your convenience the FASTGenomics team provides this beta loading routine.\n",
           call. = TRUE, immediate. = TRUE)
 
@@ -104,15 +106,22 @@ read_anndata_to_seurat_exp <- function(data_set) {
   cell_metadata <- contents$obs
   gene_metadata <- contents$var
 
-  matrix <- Matrix::sparseMatrix(
-        i = contents$X$indices + 1,
-        p = contents$X$indptr,
-        x = as.vector(contents$X$data),
-        dims = c(dim(gene_metadata)[1], dim(cell_metadata)[1]),
-        dimnames = list(rownames(gene_metadata), rownames(cell_metadata))
-    )
+  if (class(contents$X) == "list") {
+    matrix <- Matrix::sparseMatrix(
+            i = contents$X$indices + 1,
+            p = contents$X$indptr,
+            x = as.vector(contents$X$data),
+            dims = c(dim(gene_metadata)[1], dim(cell_metadata)[1]),
+            dimnames = list(rownames(gene_metadata), rownames(cell_metadata))
+        )
+  } else if (class(contents$X) == "matrix") {
+    matrix <- contents$X
+    dimnames(matrix) <- list(rownames(gene_metadata), rownames(cell_metadata))
+  } else {
+    stop("Could not read matrix inside the anndata object.")
+  }
 
-return(matrix_to_seurat(matrix, cell_metadata, gene_metadata))
+  return(matrix_to_seurat(matrix, cell_metadata, gene_metadata))
 }
 
 

@@ -4,8 +4,11 @@
 \alias{read_datasets}
 \title{Loads all datasets available for this analysis.}
 \usage{
-read_datasets(data_sets = get_datasets(DATA_DIR),
-  additional_readers = list(), experimental_readers = F)
+read_datasets(
+  data_sets = get_datasets(DATA_DIR),
+  additional_readers = list(),
+  experimental_readers = F
+)
 }
 \arguments{
 \item{data_sets}{Optional argument with a list of the datasets to load.  Typically a
