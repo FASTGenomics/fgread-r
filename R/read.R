@@ -1,4 +1,4 @@
-ROOT_DIR <- Sys.getenv("FGROOT","/fastgenomics")
+ROOT_DIR <- Sys.getenv("FGROOT", "/fastgenomics")
 DATA_DIR <- file.path(ROOT_DIR, "data")
 INFO_FILE_NAME <- "dataset_info.json"
 
@@ -15,25 +15,25 @@ BLOGURL <- "https://www.fastgenomics.org/blog_posts/readers/"
 #' @slot file Absolute path to the file under which the dataset is stored, something
 #'     like \code{".../dataset_xxxx/data.loom"}.
 setClass("DataSet",
-         slots = list(id="integer", metadata="list", path="character", file="character")
+         slots = list(id = "integer", metadata = "list", path = "character", file = "character")
          )
 
 #' constructor for the DataSet Object, takes dataset path and extracts all information
 #' from it.
-DataSet <- function(path){
-    id <- as.integer(tail(strsplit(path, "_")[[1]], n=1))
-    metadata <- jsonlite::read_json(file.path(path, INFO_FILE_NAME))
-    return(new("DataSet",
-               id=id,
-               metadata=metadata,
-               path=path,
-               file=file.path(path, metadata$file)))
+DataSet <- function(path) {
+  id <- as.integer(tail(strsplit(path, "_")[[1]], n = 1))
+  metadata <- jsonlite::read_json(file.path(path, INFO_FILE_NAME))
+  return(new("DataSet",
+               id = id,
+               metadata = metadata,
+               path = path,
+               file = file.path(path, metadata$file)))
 }
 
 setMethod(
     "show", "DataSet",
-    function(object){
-        print(glue::glue(
+    function(object) {
+      print(glue::glue(
                         "id: {object@id}\n",
                         "title: {object@metadata$title}\n",
                         "format: {object@metadata$format}\n",
@@ -59,27 +59,27 @@ setMethod(
 #' dsets_list[[1]]  # gives you the dataset with id = 1
 #'
 #' @export
-get_datasets <- function(data_dir=DATA_DIR){
-    dirs <- list.dirs(path=data_dir, full.names=T)
-    dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
+get_datasets <- function(data_dir = DATA_DIR) {
+  dirs <- list.dirs(path = data_dir, full.names = T)
+  dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
 
-    data_sets = list()
-    for (dir in dirs){
-        data_set <- DataSet(dir)
-        data_sets[[data_set@id]] <- data_set
-    }
-    return(data_sets)
+  data_sets = list()
+  for (dir in dirs) {
+    data_set <- DataSet(dir)
+    data_sets[[data_set@id]] <- data_set
+  }
+  return(data_sets)
 }
 
 
 #' Adds some data from the metadata directly to the meta.data of the seurat object.
-add_metadata <- function(seurat, data_set){
-    seurat@project.name <- data_set@metadata$title
-    seurat@meta.data$fg_dataset_id <- as.factor(data_set@id)
-    seurat@meta.data$fg_dataset_title <- as.factor(data_set@metadata$title)
-    seurat@misc$metacolumns <- c(seurat@misc$metacolumns, "fg_dataset_id", "fg_dataset_title")
-    seurat@misc$fastgenomics = list(metadata=data_set@metadata, id=data_set@id)
-    return(seurat)
+add_metadata <- function(seurat, data_set) {
+  seurat@project.name <- data_set@metadata$title
+  seurat@meta.data$fg_dataset_id <- as.factor(data_set@id)
+  seurat@meta.data$fg_dataset_title <- as.factor(data_set@metadata$title)
+  seurat@misc$metacolumns <- c(seurat@misc$metacolumns, "fg_dataset_id", "fg_dataset_title")
+  seurat@misc$fastgenomics = list(metadata = data_set@metadata, id = data_set@id)
+  return(seurat)
 }
 
 
@@ -97,53 +97,53 @@ add_metadata <- function(seurat, data_set){
 #' read_dataset(dsets_list[[1]])  # returns the Seurat object constructed from the first dataset
 #'
 #' @export
-read_dataset <- function(data_set, additional_readers=list(), experimental_readers=F){
-    force(data_set)
-    format <- data_set@metadata$format
+read_dataset <- function(data_set, additional_readers = list(), experimental_readers = F) {
+  force(data_set)
+  format <- data_set@metadata$format
 
-    if (experimental_readers){
-        readers <- utils::modifyList(DEFAULT_READERS, EXPERIMENTAL_READERS)
-        readers <- utils::modifyList(readers, additional_readers)
-    }
-    else {
-        readers <- utils::modifyList(DEFAULT_READERS, additional_readers)
-    }
+  if (experimental_readers) {
+    readers <- utils::modifyList(DEFAULT_READERS, EXPERIMENTAL_READERS)
+    readers <- utils::modifyList(readers, additional_readers)
+  }
+  else {
+    readers <- utils::modifyList(DEFAULT_READERS, additional_readers)
+  }
 
-    ## find a matching reader
-    supported_readers_str <- paste(names(readers), collapse=", ")
-    if (format %in% names(readers)){
-        title <- data_set@metadata$title
-        path <- data_set@path
-        print(glue::glue('Loading dataset "{title}" in format "{format}" from directory "{path}"...'))
-        seurat <- readers[[format]](data_set)
+  ## find a matching reader
+  supported_readers_str <- paste(names(readers), collapse = ", ")
+  if (format %in% names(readers)) {
+    title <- data_set@metadata$title
+    path <- data_set@path
+    print(glue::glue('Loading dataset "{title}" in format "{format}" from directory "{path}"...'))
+    seurat <- readers[[format]](data_set)
 
-        ## Calling this function here provides compatibility between various readers,
-        ## e.g. every seurat dataset will have @project.name coming from the manifest.
-        ## On the downside, with custom readers this may lead to overwriting
-        ## user-defined data in the seurat object.
-        seurat <- add_metadata(seurat, data_set)
-        n_genes <- dim(seurat)[[1]]
-        n_cells <- dim(seurat)[[2]]
-        print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n\n'))
-        return(seurat)
-    }
-    else if(format == "Other"){
-        stop(glue::glue(
+    ## Calling this function here provides compatibility between various readers,
+    ## e.g. every seurat dataset will have @project.name coming from the manifest.
+    ## On the downside, with custom readers this may lead to overwriting
+    ## user-defined data in the seurat object.
+    seurat <- add_metadata(seurat, data_set)
+    n_genes <- dim(seurat)[[1]]
+    n_cells <- dim(seurat)[[2]]
+    print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n\n'))
+    return(seurat)
+  }
+  else if (format == "Other") {
+    stop(glue::glue(
             'The format of the dataset "{data_set@metadata$title}" is "{format}". ',
             'Datasets with the "{format}" format are unsupported by this module and have to be loaded manually. ',
             'For more information please see {BLOGURL}.'))
-    }
-    else if(format == "Not set"){
-        stop(glue::glue(
+  }
+  else if (format == "Not set") {
+    stop(glue::glue(
             'The format of the dataset "{data_set@metadata$title}" is "{format}". ',
             'Please specify the data format in the details of this dataset if you can modify the dataset or ask the dataset owner to do that. ',
             'For more information please see {BLOGURL}.'))
-    }
-    else {
-        stop(glue::glue(
+  }
+  else {
+    stop(glue::glue(
             'Unsupported format: "{format}". ',
             'For more information please see {BLOGURL}.'))
-    }
+  }
 }
 
 
@@ -171,21 +171,21 @@ read_dataset <- function(data_set, additional_readers=list(), experimental_reade
 #' seurat <- read_datasets(dsets_list[[1]])
 #'
 #' @export
-read_datasets <- function(data_sets=get_datasets(DATA_DIR), additional_readers=list(), experimental_readers=F){
-    if(typeof(data_sets) == "S4"){
-        return(read_dataset(data_sets, additional_readers=additional_readers, experimental_readers=experimental_readers))
+read_datasets <- function(data_sets = get_datasets(DATA_DIR), additional_readers = list(), experimental_readers = F) {
+  if (typeof(data_sets) == "S4") {
+    return(read_dataset(data_sets, additional_readers = additional_readers, experimental_readers = experimental_readers))
+  }
+  else if (typeof(data_sets) == "list") {
+    loaded = list()
+    for (dset in data_sets) {
+      loaded[[dset@id]] <- read_dataset(data_set = dset, additional_readers = additional_readers, experimental_readers = experimental_readers)
     }
-    else if (typeof(data_sets) == "list"){
-        loaded = list()
-        for (dset in data_sets){
-            loaded[[dset@id]] <- read_dataset(data_set=dset, additional_readers=additional_readers, experimental_readers=experimental_readers)
-        }
-        return(loaded)
-    }
-    else {
-        stop(glue::glue(
+    return(loaded)
+  }
+  else {
+    stop(glue::glue(
             'You have to pass a dataset list or a single dataset. ',
             'For more information please see {BLOGURL}.'))
-    }
-    
+  }
+
 }
