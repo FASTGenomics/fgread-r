@@ -6,3 +6,4 @@ tests/testthat/tmpdata/**
 tests/testthat/temp/**
 docs/**
 notebooks/**
+*.ipynb
