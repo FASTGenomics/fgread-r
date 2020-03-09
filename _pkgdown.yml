@@ -3,6 +3,7 @@ reference:
   desc: >-
     Functions for loading datasets used in a FASTGenomics analysis.
   contents:
+  - 'ds_info'
   - 'get_datasets'
   - 'read_dataset'
   - 'read_datasets'

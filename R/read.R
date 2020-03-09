@@ -5,6 +5,62 @@ INFO_FILE_NAME <- "dataset_info.json"
 # Set blog url for more information
 BLOGURL <- "https://www.fastgenomics.org/blog_posts/readers/"
 
+
+#' Get information on all available datasets in this analysis.
+#'
+#' The optional argument available under \code{data_dir}.  The function then looks for
+#' all directories matching the \code{".*/dataset_\\d{4}$"} pattern and constructs a
+#' data frame with all data sets.
+#'
+#' @param ds A single dataset ID or dataset title. If set, only this dataset will be displayed.
+#'
+#' @param output Boolean whether to return a DataFrame or not, by default True
+#'
+#' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
+#'     form.  Defaults to the directory provided by the FASTGenomics platform.
+#'
+#' @return A data frame containing all, or a single dataset (depends on ``ds`` and ``output``)
+#'
+#' @examples
+#' dsets <- ds_info()
+#' dsets <- ds_info('Test loom data')
+#'
+#' @export
+ds_info <- function(ds, output = TRUE, data_dir = DATA_DIR) {
+  dirs <- list.dirs(path = data_dir, full.names = T)
+  dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
+
+  ds_list = list()
+  for (dir in dirs) {
+    ds_path <- file.path(dir, INFO_FILE_NAME)
+    ds_info <- jsonlite::read_json(ds_path)
+    ds_info["path"] <- ds_path
+    ds_info["schemaVersion"] <- NULL
+    ds_list <- rbind(ds_list, ds_info)
+  }
+  ds_df <- data.frame(ds_list, row.names=seq_along(dirs))
+
+  # sort colnames
+  sort_order <- c("title", "id", "format", "organism", "tissue", "numberOfCells","numberOfGenes")
+  col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
+  ds_df <- ds_df[col_names_sorted]
+
+  # TODO: check display pretty in notebook
+  # TODO: display data frame independent of output variable
+  # TODO: check ds in data frame
+
+  if (!missing(ds)){
+    if (output){
+      return(ds_df[ds_df$title == ds | ds_df$id == ds,])
+    }
+  } else {
+    if (output){
+      return(ds_df)
+    }
+  }
+}
+
+
 #' This class stores the information about a dataset.
 #'
 #' @slot path Path to the dataset, typically of the form
