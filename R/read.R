@@ -47,16 +47,33 @@ ds_info <- function(ds, output = TRUE, data_dir = DATA_DIR) {
 
   # TODO: check display pretty in notebook
   # TODO: display data frame independent of output variable
-  # TODO: check ds in data frame
-
+  
   if (!missing(ds)){
     if (output){
-      return(ds_df[ds_df$title == ds | ds_df$id == ds,])
+      return(select_ds_id(ds, ds_df))
     }
   } else {
     if (output){
       return(ds_df)
     }
+  }
+}
+
+#' Select a single dataset from a pandas DataFrame by its ID or title
+#'
+#' @param ds A single dataset ID or dataset title for selection
+#'
+#' @param df A data frame from which a single entry is selected, by default None
+#'
+#' @return A data frame with only the selected dataset
+select_ds_id <- function(ds, df){
+  single_df = df[df$title == ds | df$id == ds,]
+  len_df <- dim(single_df)[1]
+
+  if (len_df == 1){
+    return(single_df)
+  } else {
+    stop(glue::glue("Your selection matches {len_df} datasets. Please make sure to select exactly one"))
   }
 }
 
