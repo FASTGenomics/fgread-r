@@ -43,7 +43,7 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
   for (dir in dirs) {
     ds_path <- file.path(dir, INFO_FILE_NAME)
     ds_info <- jsonlite::read_json(ds_path)
-    ds_info["path"] <- ds_path
+    ds_info["path"] <- dir
     ds_info["schemaVersion"] <- NULL
     ds_list <- rbind(ds_list, ds_info)
   }
@@ -98,6 +98,113 @@ select_ds_id <- function(ds, df){
   } else {
     stop(glue::glue("Your selection matches {len_df} datasets. Please make sure to select exactly one"))
   }
+}
+
+
+#' Loads a single dataset to a Seurat object.
+#'
+#' If there are multiple datasets available you need to specify one by setting
+#' \code{ds} to a dataset \code{id} or dataset \code{title}.
+#' To get an overview of availabe dataset use the fucntion \code{ds_info}.
+#'
+#' @param ds A single dataset ID or dataset title.
+#'
+#' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
+#'     form.  Defaults to the directory provided by the FASTGenomics platform. 
+#'
+#' @param additional_readers List to specify your own readers for the specific dataset 
+#'      format. Still experimental, by default an empty list
+#'
+#' @param experimental_readers Boolean whether FASTGenomics in-house experimental
+#       readers should be used. By default set to False. 
+#'
+#' @return dataset loaded as a Seurat Object
+#'
+#' @examples
+#' load_data()                    # returns the Seurat object if only one dataset is available
+#' load_data('Test loom data')    # returns the Seurat object from dataset specified by title
+#'
+#' @export
+load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F) {
+  
+  # update list of readers
+  if (experimental_readers) {
+    readers <- utils::modifyList(DEFAULT_READERS, EXPERIMENTAL_READERS)
+    readers <- utils::modifyList(readers, additional_readers)
+  }
+  else {
+    readers <- utils::modifyList(DEFAULT_READERS, additional_readers)
+  }
+
+  # get single dataset
+  if (missing(ds)) {
+    single_df = ds_info(data_dir=data_dir, pretty=FALSE)
+    # stopifnot(dim(single_df)[1]==1)
+    if (dim(single_df)[1] != 1){
+      stop(glue::glue("There is more than one dataset available. Please select one by its ID or title."))
+    }
+  } else {
+    single_df = select_ds_id(ds, df=ds_info(data_dir=data_dir, pretty=FALSE))
+  }
+
+  title = single_df$title[[1]]
+  ds_id = single_df$id[[1]]
+  format = single_df$format[[1]]
+  path = single_df$path[[1]]
+  file = single_df$file[[1]]
+
+  ## find a matching reader
+  supported_readers_str <- paste(names(readers), collapse = ", ")
+  if (format %in% names(readers)) {
+    print(glue::glue('Loading dataset "{title}" in format "{format}" from directory "{path}"...'))
+    file_path = file.path(path, file)
+    seurat <- readers[[format]](file_path)
+
+    ## Calling this function here provides compatibility between various readers,
+    ## e.g. every seurat dataset will have @project.name coming from the manifest.
+    ## On the downside, with custom readers this may lead to overwriting
+    ## user-defined data in the seurat object.
+    seurat <- add_metadata(seurat, single_df)
+    n_genes <- dim(seurat)[[1]]
+    n_cells <- dim(seurat)[[2]]
+    print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n\n'))
+    return(seurat)
+  }
+  else if (format == "Other") {
+    stop(glue::glue(
+            'The format of the dataset "{title}" is "{format}". ',
+            'Datasets with the "{format}" format are unsupported by this module and have to be loaded manually. ',
+            'For more information please see {BLOGURL}.'))
+  }
+  else if (format == "Not set") {
+    stop(glue::glue(
+            'The format of the dataset "{title}" is "{format}". ',
+            'Please specify the data format in the details of this dataset if you can modify the dataset or ask the dataset owner to do that. ',
+            'For more information please see {BLOGURL}.'))
+  }
+  else {
+    stop(glue::glue(
+            'Unsupported format: "{format}". ',
+            'For more information please see {BLOGURL}.'))
+  }
+}
+
+#' Adds some data from the metadata directly to the meta.data of the seurat object.
+add_metadata <- function(seurat, ds_df) {
+
+  title = ds_df$title[[1]]
+  ds_id = ds_df$id[[1]]
+  format = ds_df$format[[1]]
+  path = ds_df$path[[1]]
+  file = ds_df$file[[1]]
+  metadata <- jsonlite::read_json(file.path(path, INFO_FILE_NAME))
+
+  seurat@project.name <- ds_df$title[[1]]
+  seurat@meta.data$fg_dataset_id <- as.factor(ds_df$id[[1]])
+  seurat@meta.data$fg_dataset_title <- as.factor(metadata$title)
+  seurat@misc$metacolumns <- c(seurat@misc$metacolumns, "fg_dataset_id", "fg_dataset_title")
+  seurat@misc$fastgenomics = list(metadata = metadata, id = ds_df$id[[1]])
+  return(seurat)
 }
 
 
@@ -169,7 +276,7 @@ get_datasets <- function(data_dir = DATA_DIR) {
 
 
 #' Adds some data from the metadata directly to the meta.data of the seurat object.
-add_metadata <- function(seurat, data_set) {
+add_metadata_old <- function(seurat, data_set) {
   seurat@project.name <- data_set@metadata$title
   seurat@meta.data$fg_dataset_id <- as.factor(data_set@id)
   seurat@meta.data$fg_dataset_title <- as.factor(data_set@metadata$title)
@@ -217,7 +324,7 @@ read_dataset <- function(data_set, additional_readers = list(), experimental_rea
     ## e.g. every seurat dataset will have @project.name coming from the manifest.
     ## On the downside, with custom readers this may lead to overwriting
     ## user-defined data in the seurat object.
-    seurat <- add_metadata(seurat, data_set)
+    seurat <- add_metadata_old(seurat, data_set)
     n_genes <- dim(seurat)[[1]]
     n_cells <- dim(seurat)[[2]]
     print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n\n'))

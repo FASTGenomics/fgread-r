@@ -20,14 +20,14 @@ matrix_to_seurat <- function(matrix, cell_metadata, gene_metadata) {
 }
 
 #' Read a Seurat object.
-read_seurat_to_seurat <- function(data_set) {
-  return(readRDS(data_set@file))
+read_seurat_to_seurat <- function(ds_file) {
+  return(readRDS(ds_file))
 }
 
 #' Reading a loom dataset currently not implemented in Seurat v3.
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 #' in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
-read_loom_to_seurat <- function(data_set) {
+read_loom_to_seurat <- function(ds_file) {
   stop(glue::glue(
         'Loading of loom files is currently not supported in Seurat v3. ',
         'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
@@ -41,7 +41,7 @@ read_loom_to_seurat <- function(data_set) {
 #' dimensional attributes are discarded). To keep the implementation simple we read the
 #' whole object into memory, including the dense count matrix.  This could be a
 #' potential bottleneck for larger datasets.
-read_loom_to_seurat_exp <- function(data_set) {
+read_loom_to_seurat_exp <- function(ds_file) {
 
   warning(
       "!! Importing loom files is currently unavailable in Seurat v3 !! ",
@@ -49,7 +49,7 @@ read_loom_to_seurat_exp <- function(data_set) {
       "In case of problems please consider using another format or implement your own loading routine.\n",
           call. = TRUE, immediate. = TRUE)
 
-  file <- rhdf5::H5Fopen(data_set@file, flags = "H5F_ACC_RDONLY")
+  file <- rhdf5::H5Fopen(ds_file, flags = "H5F_ACC_RDONLY")
   contents <- rhdf5::h5dump(file)
   rhdf5::H5Fclose(file)
 
@@ -80,11 +80,11 @@ read_loom_to_seurat_exp <- function(data_set) {
 #' Please note that this might not work as expected.
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 #' in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
-read_anndata_to_seurat <- function(data_set) {
+read_anndata_to_seurat <- function(ds_file) {
   stop(glue::glue('!!Importing AnnData is not always working as expected in Seurat v3 .',
         'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
         'For more information please see {BLOGURL}.'))
-  return(Seurat::ReadH5AD(data_set@file))
+  return(Seurat::ReadH5AD(ds_file))
 }
 
 
@@ -92,14 +92,14 @@ read_anndata_to_seurat <- function(data_set) {
 #' Importing AnnData is not always working as expected in Seurat v3
 #' For your convenience the FASTGenomics team provides this beta loading routine.
 #' Import of AnnData only works if there is a CSR matrix in the AnnData object.
-read_anndata_to_seurat_exp <- function(data_set) {
+read_anndata_to_seurat_exp <- function(ds_file) {
 
   warning(
       "!! Importing AnnData is not always working as expected in Seurat v3. ",
       "For your convenience the FASTGenomics team provides this beta loading routine.\n",
           call. = TRUE, immediate. = TRUE)
 
-  file <- rhdf5::H5Fopen(data_set@file, flags = "H5F_ACC_RDONLY")
+  file <- rhdf5::H5Fopen(ds_file, flags = "H5F_ACC_RDONLY")
   contents <- rhdf5::h5dump(file)
   rhdf5::H5Fclose(file)
 
@@ -127,24 +127,25 @@ read_anndata_to_seurat_exp <- function(data_set) {
 
 
 #' Read 10x hdf5 dataset into seurat.
-read_10xhdf5_to_seurat <- function(data_set) {
-  matrix <- Seurat::Read10X_h5(data_set@file)
+read_10xhdf5_to_seurat <- function(ds_file) {
+  matrix <- Seurat::Read10X_h5(ds_file)
   seurat <- Seurat::CreateSeuratObject(counts = matrix, min.cells = 0, min.features = 0)
   return(seurat)
 }
 
 
 #' Read 10x mtx (mex) dataset to seurat.
-read_10xmtx_to_seurat <- function(data_set) {
-  list_files <- list.files(data_set@path)
+read_10xmtx_to_seurat <- function(ds_file) {
+  dir = dirname(ds_file)
+  list_files <- list.files(dir)
   suffix <- tail(list_files[[1]], 3)
   if (suffix == '.gz') {
-    data <- Seurat::Read10X(data.dir = data_dir)
+    data <- Seurat::Read10X(data.dir = dir)
     seurat <- Seurat::CreateSeuratObject(
       counts = data$`Gene Expression`, min.cells = 0, min.features = 0)
   }
   else {
-    expression_matrix <- Seurat::Read10X(data.dir = data_set@path)
+    expression_matrix <- Seurat::Read10X(data.dir = dir)
     seurat <- Seurat::CreateSeuratObject(
       counts = expression_matrix, min.cells = 0, min.features = 0)
   }
@@ -153,24 +154,23 @@ read_10xmtx_to_seurat <- function(data_set) {
 
 
 #' Read dense matrix in csv form
-read_densecsv_to_seurat <- function(data_set) {
-  return(read_densemat_to_seurat(data_set, ","))
+read_densecsv_to_seurat <- function(ds_file) {
+  return(read_densemat_to_seurat(ds_file, ","))
 }
 
 
 #' Read dense matrix in tsv form
-read_densetsv_to_seurat <- function(data_set) {
-  return(read_densemat_to_seurat(data_set, "\t"))
+read_densetsv_to_seurat <- function(ds_file) {
+  return(read_densemat_to_seurat(ds_file, "\t"))
 }
 
 
 #' Read dense matrix
 #' here we need to unpack the dataset before reading it
-read_densemat_to_seurat <- function(data_set, sep) {
-  file <- data_set@file
-  x <- data.table::fread(file, sep = sep, header = F, skip = 1, na.strings = NULL)
+read_densemat_to_seurat <- function(ds_file, sep) {
+  x <- data.table::fread(ds_file, sep = sep, header = F, skip = 1, na.strings = NULL)
   genes <- x[[1]]
-  cells <- colnames(data.table::fread(file, sep = sep, header = T, nrows = 0))
+  cells <- colnames(data.table::fread(ds_file, sep = sep, header = T, nrows = 0))
   cells <- tail(cells, dim(x)[[2]] - 1) # ignore column name of genes, if present
   matrix <- as.matrix(x[, 2:dim(x)[2]])
   dimnames(matrix) <- list(genes, cells)
