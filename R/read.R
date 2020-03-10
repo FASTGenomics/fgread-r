@@ -14,6 +14,8 @@ BLOGURL <- "https://www.fastgenomics.org/blog_posts/readers/"
 #'
 #' @param ds A single dataset ID or dataset title. If set, only this dataset will be displayed.
 #'
+#' @param pretty Boolean whether to display some nicely formatted output, by default True
+#'
 #' @param output Boolean whether to return a DataFrame or not, by default True
 #'
 #' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
@@ -26,10 +28,17 @@ BLOGURL <- "https://www.fastgenomics.org/blog_posts/readers/"
 #' dsets <- ds_info('Test loom data')
 #'
 #' @export
-ds_info <- function(ds, output = TRUE, data_dir = DATA_DIR) {
+ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
+  
+  if(!pretty & !output){
+    warning('You have set "pretty" and "output" to false. Hence, this function will do/return nothing.')
+  }
+
+  # get all data set folders
   dirs <- list.dirs(path = data_dir, full.names = T)
   dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
 
+  # create data frame with all data set informations
   ds_list = list()
   for (dir in dirs) {
     ds_path <- file.path(dir, INFO_FILE_NAME)
@@ -44,15 +53,29 @@ ds_info <- function(ds, output = TRUE, data_dir = DATA_DIR) {
   sort_order <- c("title", "id", "format", "organism", "tissue", "numberOfCells","numberOfGenes")
   col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
   ds_df <- ds_df[col_names_sorted]
-
-  # TODO: check display pretty in notebook
-  # TODO: display data frame independent of output variable
   
-  if (!missing(ds)){
-    if (output){
-      return(select_ds_id(ds, ds_df))
+  # create output and display 
+  if (!missing(ds)){ # if ds is specified
+    single_ds_df = select_ds_id(ds, ds_df)
+
+    if (pretty){
+      dt <- DT::datatable(t(single_ds_df))
+      IRdisplay::display(dt)
     }
+
+    if (output){
+      return(single_ds_df)
+    }
+
   } else {
+
+    if (pretty) {
+      drop = c("description", "license", "preprocessing", "citation", "webLink")
+      df = ds_df[,!(names(ds_df) %in% drop)]
+      dt <- DT::datatable(df)
+      IRdisplay::display(dt)
+    }
+
     if (output){
       return(ds_df)
     }
