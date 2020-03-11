@@ -305,11 +305,11 @@ read_dataset <- function(data_set, additional_readers = list(), experimental_rea
   format <- data_set@metadata$format
 
   if (experimental_readers) {
-    readers <- utils::modifyList(DEFAULT_READERS, EXPERIMENTAL_READERS)
+    readers <- utils::modifyList(DEFAULT_READERS_old, EXPERIMENTAL_READERS_old)
     readers <- utils::modifyList(readers, additional_readers)
   }
   else {
-    readers <- utils::modifyList(DEFAULT_READERS, additional_readers)
+    readers <- utils::modifyList(DEFAULT_READERS_old, additional_readers)
   }
 
   ## find a matching reader
