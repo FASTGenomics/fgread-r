@@ -263,6 +263,7 @@ setMethod(
 #'
 #' @export
 get_datasets <- function(data_dir = DATA_DIR) {
+  .Deprecated("fgread::ds_info")
   dirs <- list.dirs(path = data_dir, full.names = T)
   dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
 
@@ -301,6 +302,7 @@ add_metadata_old <- function(seurat, data_set) {
 #'
 #' @export
 read_dataset <- function(data_set, additional_readers = list(), experimental_readers = F) {
+  .Deprecated("fgread::load_data")
   force(data_set)
   format <- data_set@metadata$format
 
@@ -375,6 +377,7 @@ read_dataset <- function(data_set, additional_readers = list(), experimental_rea
 #'
 #' @export
 read_datasets <- function(data_sets = get_datasets(DATA_DIR), additional_readers = list(), experimental_readers = F) {
+  .Deprecated("fgread::load_data")
   if (typeof(data_sets) == "S4") {
     return(read_dataset(data_sets, additional_readers = additional_readers, experimental_readers = experimental_readers))
   }
