@@ -3,7 +3,15 @@ DATA_DIR <- file.path(ROOT_DIR, "data")
 INFO_FILE_NAME <- "dataset_info.json"
 
 # Set blog url for more information
-BLOGURL <- "https://www.fastgenomics.org/blog_posts/readers/"
+if (Sys.getenv("FG_URL") != "") {
+  ENV_FGURL <- Sys.getenv("FG_URL")
+  FGURL <- paste(strsplit(ENV_FGURL, ":")[[1]][1], strsplit(ENV_FGURL, ":")[[1]][2], sep = ":")
+} else {
+  FGURL <- "https://beta.fastgenomics.org"
+}
+
+DOCSURL <- paste(FGURL, "/docs/", sep = "")
+DS_URL_PREFIX <- paste(FGURL, "/webclient/ui/#/datasets/detail-", sep = "")
 
 
 #' Get information on all available datasets in this analysis.
@@ -29,8 +37,8 @@ BLOGURL <- "https://www.fastgenomics.org/blog_posts/readers/"
 #'
 #' @export
 ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
-  
-  if(!pretty & !output){
+
+  if (!pretty & !output) {
     warning('You have set "pretty" and "output" to false. Hence, this function will do/return nothing.')
   }
 
@@ -47,23 +55,24 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
     ds_info["schemaVersion"] <- NULL
     ds_list <- rbind(ds_list, ds_info)
   }
-  ds_df <- data.frame(ds_list, row.names=seq_along(dirs))
+  ds_df <- data.frame(ds_list, row.names = seq_along(dirs))
 
   # sort colnames
-  sort_order <- c("title", "id", "format", "organism", "tissue", "numberOfCells","numberOfGenes")
+  sort_order <- c("title", "id", "format", "organism", "tissue", "numberOfCells", "numberOfGenes")
   col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
   ds_df <- ds_df[col_names_sorted]
-  
+
   # create output and display 
-  if (!missing(ds)){ # if ds is specified
+  if (!missing(ds)) {
+    # if ds is specified
     single_ds_df = select_ds_id(ds, ds_df)
 
-    if (pretty){
+    if (pretty) {
       dt <- DT::datatable(t(single_ds_df))
       IRdisplay::display(dt)
     }
 
-    if (output){
+    if (output) {
       return(single_ds_df)
     }
 
@@ -71,12 +80,12 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
 
     if (pretty) {
       drop = c("description", "license", "preprocessing", "citation", "webLink")
-      df = ds_df[,!(names(ds_df) %in% drop)]
+      df = ds_df[, !(names(ds_df) %in% drop)]
       dt <- DT::datatable(df)
       IRdisplay::display(dt)
     }
 
-    if (output){
+    if (output) {
       return(ds_df)
     }
   }
@@ -89,11 +98,11 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
 #' @param df A data frame from which a single entry is selected, by default None
 #'
 #' @return A data frame with only the selected dataset
-select_ds_id <- function(ds, df){
+select_ds_id <- function(ds, df) {
   single_df = df[df$title == ds | df$id == ds,]
   len_df <- dim(single_df)[1]
 
-  if (len_df == 1){
+  if (len_df == 1) {
     return(single_df)
   } else {
     stop(glue::glue("Your selection matches {len_df} datasets. Please make sure to select exactly one"))
@@ -126,7 +135,7 @@ select_ds_id <- function(ds, df){
 #'
 #' @export
 load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F) {
-  
+
   # update list of readers
   if (experimental_readers) {
     readers <- utils::modifyList(DEFAULT_READERS, EXPERIMENTAL_READERS)
@@ -138,13 +147,13 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
 
   # get single dataset
   if (missing(ds)) {
-    single_df = ds_info(data_dir=data_dir, pretty=FALSE)
+    single_df = ds_info(data_dir = data_dir, pretty = FALSE)
     # stopifnot(dim(single_df)[1]==1)
-    if (dim(single_df)[1] != 1){
+    if (dim(single_df)[1] != 1) {
       stop(glue::glue("There is more than one dataset available. Please select one by its ID or title."))
     }
   } else {
-    single_df = select_ds_id(ds, df=ds_info(data_dir=data_dir, pretty=FALSE))
+    single_df = select_ds_id(ds, df = ds_info(data_dir = data_dir, pretty = FALSE))
   }
 
   title = single_df$title[[1]]
@@ -173,18 +182,18 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
     stop(glue::glue(
             'The format of the dataset "{title}" is "{format}". ',
             'Datasets with the "{format}" format are unsupported by this module and have to be loaded manually. ',
-            'For more information please see {BLOGURL}.'))
+            'For more information please see {DOCSURL}.'))
   }
   else if (format == "Not set") {
     stop(glue::glue(
             'The format of the dataset "{title}" is "{format}". ',
             'Please specify the data format in the details of this dataset if you can modify the dataset or ask the dataset owner to do that. ',
-            'For more information please see {BLOGURL}.'))
+            'For more information please see {DOCSURL}.'))
   }
   else {
     stop(glue::glue(
             'Unsupported format: "{format}". ',
-            'For more information please see {BLOGURL}.'))
+            'For more information please see {DOCSURL}.'))
   }
 }
 
@@ -333,18 +342,18 @@ read_dataset <- function(data_set, additional_readers = list(), experimental_rea
     stop(glue::glue(
             'The format of the dataset "{data_set@metadata$title}" is "{format}". ',
             'Datasets with the "{format}" format are unsupported by this module and have to be loaded manually. ',
-            'For more information please see {BLOGURL}.'))
+            'For more information please see {DOCSURL}.'))
   }
   else if (format == "Not set") {
     stop(glue::glue(
             'The format of the dataset "{data_set@metadata$title}" is "{format}". ',
             'Please specify the data format in the details of this dataset if you can modify the dataset or ask the dataset owner to do that. ',
-            'For more information please see {BLOGURL}.'))
+            'For more information please see {DOCSURL}.'))
   }
   else {
     stop(glue::glue(
             'Unsupported format: "{format}". ',
-            'For more information please see {BLOGURL}.'))
+            'For more information please see {DOCSURL}.'))
   }
 }
 
@@ -388,7 +397,7 @@ read_datasets <- function(data_sets = get_datasets(DATA_DIR), additional_readers
   else {
     stop(glue::glue(
             'You have to pass a dataset list or a single dataset. ',
-            'For more information please see {BLOGURL}.'))
+            'For more information please see {DOCSURL}.'))
   }
 
 }

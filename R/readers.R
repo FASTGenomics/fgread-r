@@ -31,7 +31,7 @@ read_loom_to_seurat <- function(ds_file) {
   stop(glue::glue(
         'Loading of loom files is currently not supported in Seurat v3. ',
         'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
-        'For more information please see {BLOGURL}.'))
+        'For more information please see {DOCSURL}.'))
 }
 
 #' Read a loom dataset with the experimental FASTGenomics reader.
@@ -83,7 +83,7 @@ read_loom_to_seurat_exp <- function(ds_file) {
 read_anndata_to_seurat <- function(ds_file) {
   stop(glue::glue('!!Importing AnnData is not always working as expected in Seurat v3 .',
         'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
-        'For more information please see {BLOGURL}.'))
+        'For more information please see {DOCSURL}.'))
   return(Seurat::ReadH5AD(ds_file))
 }
 
