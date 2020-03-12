@@ -4,7 +4,7 @@
 \alias{read_densetsv_to_seurat}
 \title{Read dense matrix in tsv form}
 \usage{
-read_densetsv_to_seurat(data_set)
+read_densetsv_to_seurat(ds_file)
 }
 \description{
 Read dense matrix in tsv form

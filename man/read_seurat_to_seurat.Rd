@@ -4,7 +4,7 @@
 \alias{read_seurat_to_seurat}
 \title{Read a Seurat object.}
 \usage{
-read_seurat_to_seurat(data_set)
+read_seurat_to_seurat(ds_file)
 }
 \description{
 Read a Seurat object.

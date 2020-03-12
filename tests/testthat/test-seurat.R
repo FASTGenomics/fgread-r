@@ -16,12 +16,14 @@ DATASETS <- list(
     list(id = "dataset-f93640431b0e4835a55332fpgkljaqdz", dim = c(20, 10), title = "AnnData dense dataset", format = "AnnData")
 )
 
+
 Map(
     function(dset) {
       test_that(glue::glue("Format {dset$format} loads"),
                   suppressWarnings({
-        data_table <- fgread::ds_info(data_dir=DATADIR, pretty=FALSE)
-        seurat <- fgread::load_data(dset$title, experimental_readers = T)
+        data_table <- fgread::ds_info(data_dir = DATADIR, pretty = FALSE)
+        print(dset$title)
+        seurat <- fgread::load_data(dset$title, experimental_readers = T, data_dir = DATADIR)
         expect_equal(dim(seurat), dset$dim)
         expect_equal(seurat@project.name, dset$title)
         # expect_equal(seurat@misc$fastgenomics$metadata, data_table[[dset$id]]@metadata)

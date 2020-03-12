@@ -53,3 +53,9 @@ Once the dependencies are there you can run the tests with
 ```R
 devtools::test()
 ```
+
+### Build Documentaion
+
+```R
+devtools::document()
+```
