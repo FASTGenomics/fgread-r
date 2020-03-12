@@ -148,7 +148,6 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
   }
 
   title = single_df$title[[1]]
-  ds_id = single_df$id[[1]]
   format = single_df$format[[1]]
   path = single_df$path[[1]]
   file = single_df$file[[1]]
@@ -201,8 +200,6 @@ add_metadata <- function(seurat, ds_df) {
 
   seurat@project.name <- ds_df$title[[1]]
   seurat@meta.data$fg_dataset_id <- as.factor(ds_df$id[[1]])
-  seurat@meta.data$fg_dataset_title <- as.factor(metadata$title)
-  seurat@misc$metacolumns <- c(seurat@misc$metacolumns, "fg_dataset_id", "fg_dataset_title")
   seurat@misc$fastgenomics = list(metadata = metadata, id = ds_df$id[[1]])
   return(seurat)
 }
