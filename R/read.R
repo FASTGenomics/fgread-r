@@ -71,7 +71,8 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
       dt <- DT::datatable(t(single_ds_df), colnames = rep("", ncol(t(single_ds_df))), options = list(
         paging = FALSE,
         searching = FALSE,
-        ordering=FALSE
+        ordering=FALSE,
+        info = FALSE
       ))
       IRdisplay::display(dt)
     }
@@ -86,7 +87,8 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
       drop = c("description", "license", "preprocessing", "citation", "webLink")
       df = ds_df[, !(names(ds_df) %in% drop)]
       dt <- DT::datatable(df, options = list(
-        paging = FALSE
+        paging = FALSE,
+        info = FALSE
       ))
       IRdisplay::display(dt)
     }
