@@ -68,7 +68,9 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
     single_ds_df = select_ds_id(ds, ds_df)
 
     if (pretty) {
-      dt <- DT::datatable(t(single_ds_df))
+      dt <- DT::datatable(t(single_ds_df), options = list(
+        paging = FALSE
+      ))
       IRdisplay::display(dt)
     }
 
