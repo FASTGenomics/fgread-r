@@ -4,6 +4,7 @@ reference:
     Functions for loading datasets used in a FASTGenomics analysis.
   contents:
   - 'ds_info'
+  - 'load_data'
   - 'get_datasets'
   - 'read_dataset'
   - 'read_datasets'
@@ -26,4 +27,4 @@ reference:
 desc: >-
     As Seurat v3 is not supporting the loom format at the moment and reading of AnnData (h5ad) does not always work
     FASTGenomics implemented some experimental readers for your convenience. Activate them by setting
-    "experiemntal_readers=TRUE" in \code{\link{read_datasets}} or \code{\link{read_dataset}}
+    "experimental_readers=TRUE" in \code{\link{read_datasets}} or \code{\link{read_dataset}}
