@@ -81,7 +81,9 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
     if (pretty) {
       drop = c("description", "license", "preprocessing", "citation", "webLink")
       df = ds_df[, !(names(ds_df) %in% drop)]
-      dt <- DT::datatable(df)
+      dt <- DT::datatable(df, options = list(
+        paging = False
+      ))
       IRdisplay::display(dt)
     }
 
