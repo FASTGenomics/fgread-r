@@ -68,8 +68,10 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
     single_ds_df = select_ds_id(ds, ds_df)
 
     if (pretty) {
-      dt <- DT::datatable(t(single_ds_df), options = list(
-        paging = FALSE
+      dt <- DT::datatable(t(single_ds_df), colnames = rep("", ncol(t(single_ds_df))), options = list(
+        paging = FALSE,
+        searching = FALSE,
+        ordering=FALSE
       ))
       IRdisplay::display(dt)
     }
@@ -105,7 +107,6 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
 select_ds_id <- function(ds, df) {
   single_df = df[df$title == ds | df$id == ds,]
   len_df <- dim(single_df)[1]
-
   if (len_df == 1) {
     return(single_df)
   } else {
