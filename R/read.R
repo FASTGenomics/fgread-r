@@ -66,9 +66,10 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
   if (!missing(ds)) {
     # if ds is specified
     single_ds_df = select_ds_id(ds, ds_df)
+    single_ds_df$title <- paste0("<a href='", DS_URL_PREFIX, single_ds_df$id,"' target='_blank'>", single_ds_df$title, "</a>")
 
     if (pretty) {
-      dt <- DT::datatable(t(single_ds_df), colnames = rep("", ncol(t(single_ds_df))), options = list(
+      dt <- DT::datatable(t(single_ds_df), escape = FALSE, colnames = rep("", ncol(t(single_ds_df))), options = list(
         paging = FALSE,
         searching = FALSE,
         ordering=FALSE,
@@ -86,7 +87,8 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
     if (pretty) {
       drop = c("description", "license", "preprocessing", "citation", "webLink")
       df = ds_df[, !(names(ds_df) %in% drop)]
-      dt <- DT::datatable(df, options = list(
+      df$title <- paste0("<a href='", DS_URL_PREFIX, df$id,"' target='_blank'>", df$title, "</a>")
+      dt <- DT::datatable(df, escape = FALSE, options = list(
         paging = FALSE,
         info = FALSE
       ))
