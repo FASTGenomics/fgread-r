@@ -60,10 +60,18 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
   # sort colnames
   sort_order <- c("title", "id", "format", "organism", "tissue", "numberOfCells", "numberOfGenes")
   col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
-  ds_df <- ds_df[col_names_sorted]
+  # construct empty dataframe if no datasets attached
+  if(length(dirs) == 0) {
+    ds_df <- setNames(data.frame(matrix(ncol = length(col_names_sorted), nrow = 0)), col_names_sorted)
+  } else {
+    ds_df <- ds_df[col_names_sorted]
+  }
 
   # create output and display 
   if (!missing(ds)) {
+    if(length(dirs) == 0) {
+      stop("There are no datasets in your analysis")
+    }
     # if ds is specified
     single_ds_df = select_ds_id(ds, ds_df)
     single_ds_df$title <- paste0("<a href='", DS_URL_PREFIX, single_ds_df$id,"' target='_blank'>", single_ds_df$title, "</a>")
@@ -87,7 +95,9 @@ ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
     if (pretty) {
       drop = c("description", "license", "preprocessing", "citation", "webLink")
       df = ds_df[, !(names(ds_df) %in% drop)]
-      df$title <- paste0("<a href='", DS_URL_PREFIX, df$id,"' target='_blank'>", df$title, "</a>")
+      if (length(dirs)>0) {
+        df$title <- paste0("<a href='", DS_URL_PREFIX, df$id,"' target='_blank'>", df$title, "</a>")
+      }
       dt <- DT::datatable(df, escape = FALSE, options = list(
         paging = FALSE,
         info = FALSE
