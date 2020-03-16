@@ -3,57 +3,43 @@
 # FASTGenomics Reader Module for R
 
 This package implements convenience functions for loading datasets in the
-[FASTGenomics][fg] analysis environments. The functions from this package
-let you list and load datasets associated to the corresponding analysis.
+[FASTGenomics][fg] [analysis][fg_analysis] environment. The functions from this package
+will let you list and load datasets for which the analysis was defined.
 
-[fg]: https://beta.fastgenomics.org/
+[fg]: https://beta.fastgenomics.org
+[fg_analysis]: https://beta.fastgenomics.org/webclient/searchPage/analyses
 
 ## Documentation
 
-For the general documentation on how to use the reader, please visit our FASTGenomics Documentation.
+For the general documentation on how to use the reader, please visit our [FASTGenomics Documentation][docs].
 
 For details on the available functions see the [API Documentation](https://fastgenomics.github.io/fgread-r/docs/).
 
+[docs]: https://beta.fastgenomics.org/docs
+
 ## Known issues
 
-- Seurat's loading function uses a lot of memory (already 10GB RAM for a relatively modest Drop-Seq dataset 
-  of 20k cell barcodes). For larger datasets one may therefore exceed the resource limits on FASTGenomics.
+Please report the issues through [github][issues].
 
-- There is no functionality to read AnnData objects in Seurat. Therefore, we provide a custom reader. 
-  This custom reader, however, only reads the `.X`, `.obs` and `.var` components of the AnnData object.
-  The function is also limited to count tables in the CSR format.
+[issues]: https://github.com/FASTGenomics/fgread-r/issues
 
 ## Development and testing
 
 Clone the repository along with the test data by running
 
 ```bash
-git clone git@github.com:FASTGenomics/fgread-r.git
-cd fgread-r
-git submodule init
-git submodule update
+git clone --recurse-submodules git@github.com:FASTGenomics/fgread-r.git
 ```
 
-Run R in the `fgread-r` directory, install the devtools package (if you don't have it already)
+Then enter the `fgread-r` directory and install the dependencies with
 
 ```R
 install.packages("devtools")
-```
-
-and install the package dependencies
-
-```R
 devtools::install_deps(upgrade="never")
 ```
 
-Once the dependencies are there you can run the tests with
+To test the package use
 
 ```R
 devtools::test()
-```
-
-### Build Documentaion
-
-```R
-devtools::document()
 ```
