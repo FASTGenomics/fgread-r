@@ -36,7 +36,14 @@ DS_URL_PREFIX <- paste(FGURL, "/webclient/ui/#/datasets/detail-", sep = "")
 #' dsets <- ds_info('Test loom data')
 #'
 #' @export
-ds_info <- function(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR) {
+ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR) {
+
+  if (is.null(pretty)) {
+    pretty = !is.null(ds)
+  }
+  if (is.null(output)) {
+    output = is.null(ds)
+  }
 
   if (!pretty & !output) {
     warning('You have set "pretty" and "output" to false. Hence, this function will do/return nothing.')

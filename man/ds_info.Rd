@@ -4,7 +4,7 @@
 \alias{ds_info}
 \title{Get information on all available datasets in this analysis.}
 \usage{
-ds_info(ds, pretty = TRUE, output = TRUE, data_dir = DATA_DIR)
+ds_info(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR)
 }
 \arguments{
 \item{ds}{A single dataset ID or dataset title. If set, only this dataset will be displayed.}
