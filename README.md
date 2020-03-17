@@ -17,6 +17,18 @@ For details on the available functions see the [API Documentation](https://fastg
 
 [docs]: https://beta.fastgenomics.org/docs
 
+## Limitations
+
+### TSV/CSV Reader
+
+Loading large files, especially if they are very sparse, in plain text format need a lot of memory and can be rather slow.
+For large datasets we recommend to use formats that support sparse data.
+
+### AnnData Reader
+
+As the internal Seurat reader for AnnData fails to convert certain datasets (depending on scaling, normalization etc.), we provide a custom reader.
+This custom reader, however, only reads the `.X`, `.obs` and `.var` components of the AnnData object.
+
 ## Known issues
 
 Please report the issues through [github][issues].
@@ -42,4 +54,10 @@ To test the package use
 
 ```R
 devtools::test()
+```
+
+### Build Documentaion
+
+```R
+devtools::document()
 ```
