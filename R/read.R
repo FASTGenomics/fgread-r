@@ -50,7 +50,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
   }
 
   # get all data set folders
-  dirs <- list.dirs(path = data_dir, full.names = T)
+  dirs <- list.dirs(path = data_dir, full.names = T) # TODO: should be a seperate function (get_ds_paths) that also checks if there are DSs attached or not; see below
   dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
 
   # create data frame with all data set informations
@@ -68,7 +68,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
   sort_order <- c("title", "id", "format", "organism", "tissue", "numberOfCells", "numberOfGenes")
   col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
   # construct empty dataframe if no datasets attached
-  if(length(dirs) == 0) {
+  if (length(dirs) == 0) {
     ds_df <- setNames(data.frame(matrix(ncol = length(col_names_sorted), nrow = 0)), col_names_sorted)
   } else {
     ds_df <- ds_df[col_names_sorted]
@@ -76,18 +76,19 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
 
   # create output and display 
   if (!missing(ds)) {
-    if(length(dirs) == 0) {
+    if (length(dirs) == 0) {
+      # TODO: This check is only performed if ds ist set, should be part of the get_ds_paths function
       stop("There are no datasets in your analysis")
     }
     # if ds is specified
     single_ds_df = select_ds_id(ds, ds_df)
-    single_ds_df$title <- paste0("<a href='", DS_URL_PREFIX, single_ds_df$id,"' target='_blank'>", single_ds_df$title, "</a>")
+    single_ds_df$title <- paste0("<a href='", DS_URL_PREFIX, single_ds_df$id, "' target='_blank'>", single_ds_df$title, "</a>")
 
     if (pretty) {
       dt <- DT::datatable(t(single_ds_df), escape = FALSE, colnames = rep("", ncol(t(single_ds_df))), options = list(
         paging = FALSE,
         searching = FALSE,
-        ordering=FALSE,
+        ordering = FALSE,
         info = FALSE
       ))
       IRdisplay::display(dt)
@@ -98,12 +99,13 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     }
 
   } else {
+    # TODO: see above, no check for empty DS list
 
     if (pretty) {
       drop = c("description", "license", "preprocessing", "citation", "webLink")
       df = ds_df[, !(names(ds_df) %in% drop)]
-      if (length(dirs)>0) {
-        df$title <- paste0("<a href='", DS_URL_PREFIX, df$id,"' target='_blank'>", df$title, "</a>")
+      if (length(dirs) > 0) {
+        df$title <- paste0("<a href='", DS_URL_PREFIX, df$id, "' target='_blank'>", df$title, "</a>")
       }
       dt <- DT::datatable(df, escape = FALSE, options = list(
         paging = FALSE,
