@@ -1,30 +1,30 @@
 reference:
-- title: Reading datasets
-  desc: >-
-    Functions for loading datasets used in a FASTGenomics analysis.
-  contents:
-  - 'ds_info'
-  - 'load_data'
-  - 'get_datasets'
-  - 'read_dataset'
-  - 'read_datasets'
-  - 'DataSet-class'
-  
-- title: Available default readers
-  desc: >-
-    Description of the default readers.
-  contents:
-  - 'read_anndata_to_seurat'
-  - 'read_densemat_to_seurat'
-  - 'read_loom_to_seurat'
-  - 'read_densecsv_to_seurat'
-  - 'read_densetsv_to_seurat'
-  - 'read_seurat_to_seurat'
-  - 'read_10xhdf5_to_seurat'
-  - 'read_10xmtx_to_seurat'
+  - title: Reading datasets
+    desc: >-
+      Functions for loading datasets used in a FASTGenomics analysis.
+    contents:
+      - "ds_info"
+      - "load_data"
+      - "get_datasets"
+      - "read_dataset"
+      - "read_datasets"
+      - "DataSet-class"
 
-- title: Available experimental readers
+  - title: Available default readers
+    desc: >-
+      Description of the default readers.
+    contents:
+      - "read_anndata_to_seurat"
+      - "read_densemat_to_seurat"
+      - "read_loom_to_seurat"
+      - "read_densecsv_to_seurat"
+      - "read_densetsv_to_seurat"
+      - "read_seurat_to_seurat"
+      - "read_10xhdf5_to_seurat"
+      - "read_10xmtx_to_seurat"
+
+  - title: Available experimental readers
 desc: >-
-    As Seurat v3 is not supporting the loom format at the moment and reading of AnnData (h5ad) does not always work
-    FASTGenomics implemented some experimental readers for your convenience. Activate them by setting
-    "experimental_readers=TRUE" in \code{\link{read_datasets}} or \code{\link{read_dataset}}
+  As Seurat v3 is not supporting the loom format at the moment and reading of AnnData (h5ad) does not always work
+  FASTGenomics implemented some experimental readers for your convenience. Activate them by setting
+  "experimental_readers=TRUE" in \code{\link{read_datasets}} or \code{\link{read_dataset}}

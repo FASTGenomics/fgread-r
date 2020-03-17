@@ -10,7 +10,7 @@ install:
 
 before_deploy:
   - Rscript -e 'pkgdown::build_site(examples=F, new_process = FALSE)'
-  - rm .gitignore               # there is docs/* in gitignore
+  - rm .gitignore # there is docs/* in gitignore
 
 deploy:
   provider: pages
