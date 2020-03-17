@@ -81,7 +81,7 @@ read_loom_to_seurat_exp <- function(ds_file) {
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 #' in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
 read_anndata_to_seurat <- function(ds_file) {
-  stop(glue::glue('!!Importing AnnData is not always working as expected in Seurat v3 .',
+  warning(glue::glue('!!Importing AnnData is not always working as expected in Seurat v3 .',
         'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
         'For more information please see {DOCSURL}.'))
   return(Seurat::ReadH5AD(ds_file))
@@ -91,12 +91,13 @@ read_anndata_to_seurat <- function(ds_file) {
 #' Read AnnData to Seurat with experimental FASTGenomics reader.
 #' Importing AnnData is not always working as expected in Seurat v3
 #' For your convenience the FASTGenomics team provides this beta loading routine.
-#' Import of AnnData only works if there is a CSR matrix in the AnnData object.
+#' This custom reader, however, only reads the `.X`, `.obs` and `.var` components of the AnnData object.
 read_anndata_to_seurat_exp <- function(ds_file) {
 
   warning(
       "!! Importing AnnData is not always working as expected in Seurat v3. ",
-      "For your convenience the FASTGenomics team provides this beta loading routine.\n",
+      "For your convenience the FASTGenomics team provides this beta loading routine. ",
+      "However, this reader only reads the `.X`, `.obs` and `.var` components of the AnnData object.\n",
           call. = TRUE, immediate. = TRUE)
 
   file <- rhdf5::H5Fopen(ds_file, flags = "H5F_ACC_RDONLY")
