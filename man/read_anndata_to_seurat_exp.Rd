@@ -5,7 +5,7 @@
 \title{Read AnnData to Seurat with experimental FASTGenomics reader.
 Importing AnnData is not always working as expected in Seurat v3
 For your convenience the FASTGenomics team provides this beta loading routine.
-Import of AnnData only works if there is a CSR matrix in the AnnData object.}
+This custom reader, however, only reads the \code{.X}, \code{.obs} and \code{.var} components of the AnnData object.}
 \usage{
 read_anndata_to_seurat_exp(ds_file)
 }
@@ -13,5 +13,5 @@ read_anndata_to_seurat_exp(ds_file)
 Read AnnData to Seurat with experimental FASTGenomics reader.
 Importing AnnData is not always working as expected in Seurat v3
 For your convenience the FASTGenomics team provides this beta loading routine.
-Import of AnnData only works if there is a CSR matrix in the AnnData object.
+This custom reader, however, only reads the \code{.X}, \code{.obs} and \code{.var} components of the AnnData object.
 }
