@@ -17,7 +17,9 @@ Takes a \code{\link{DataSet}} object as an argument. This function should be use
 with conjunction to \code{\link{get_datasets}}.
 }
 \examples{
+\donttest{
 dsets_list <- get_datasets()
 read_dataset(dsets_list[[1]])  # returns the Seurat object constructed from the first dataset
+}
 
 }

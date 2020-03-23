@@ -32,8 +32,10 @@ DS_URL_PREFIX <- paste(FGURL, "/webclient/ui/#/datasets/detail-", sep = "")
 #' @return A data frame containing all, or a single dataset (depends on ``ds`` and ``output``)
 #'
 #' @examples
+#' \donttest{
 #' dsets <- ds_info()
 #' dsets <- ds_info('Test loom data')
+#' }
 #'
 #' @export
 ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR) {
@@ -158,8 +160,10 @@ select_ds_id <- function(ds, df) {
 #' @return dataset loaded as a Seurat Object
 #'
 #' @examples
+#' \donttest{
 #' load_data()                    # returns the Seurat object if only one dataset is available
 #' load_data('Test loom data')    # returns the Seurat object from dataset specified by title
+#' }
 #'
 #' @export
 load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F) {
@@ -292,8 +296,10 @@ setMethod(
 #' @return List of datasets (as \code{DataSet} objects) indexed by dataset id.
 #'
 #' @examples
+#' \donttest{
 #' dsets_list <- get_datasets()
 #' dsets_list[[1]]  # gives you the dataset with id = 1
+#' }
 #'
 #' @export
 get_datasets <- function(data_dir = DATA_DIR) {
@@ -331,8 +337,10 @@ add_metadata_old <- function(seurat, data_set) {
 #' @return dataset loaded as a Seurat Object
 #'
 #' @examples
+#' \donttest{
 #' dsets_list <- get_datasets()
 #' read_dataset(dsets_list[[1]])  # returns the Seurat object constructed from the first dataset
+#' }
 #'
 #' @export
 read_dataset <- function(data_set, additional_readers = list(), experimental_readers = F) {
@@ -399,6 +407,7 @@ read_dataset <- function(data_set, additional_readers = list(), experimental_rea
 #'     a single Seurat object is returned.
 #'
 #' @examples
+#' \donttest{
 #' # loads all datasets as seurat objects
 #' seurat <- read_datasets()
 #'
@@ -408,6 +417,7 @@ read_dataset <- function(data_set, additional_readers = list(), experimental_rea
 #' 
 #' # loads only the firt dataset and returns a Seurat object
 #' seurat <- read_datasets(dsets_list[[1]])
+#' }
 #'
 #' @export
 read_datasets <- function(data_sets = get_datasets(DATA_DIR), additional_readers = list(), experimental_readers = F) {

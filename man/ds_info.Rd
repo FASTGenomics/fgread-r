@@ -25,7 +25,9 @@ all directories matching the \code{".*/dataset_\\d{4}$"} pattern and constructs 
 data frame with all data sets.
 }
 \examples{
+\donttest{
 dsets <- ds_info()
 dsets <- ds_info('Test loom data')
+}
 
 }

@@ -31,7 +31,9 @@ If there are multiple datasets available you need to specify one by setting
 To get an overview of availabe dataset use the fucntion \code{ds_info}.
 }
 \examples{
+\donttest{
 load_data()                    # returns the Seurat object if only one dataset is available
 load_data('Test loom data')    # returns the Seurat object from dataset specified by title
+}
 
 }
