@@ -19,7 +19,9 @@ all directories matching the \code{".*/dataset_\\d{4}$"} pattern and constructs 
 \code{DataSet} object from each of them.
 }
 \examples{
+\donttest{
 dsets_list <- get_datasets()
 dsets_list[[1]]  # gives you the dataset with id = 1
+}
 
 }

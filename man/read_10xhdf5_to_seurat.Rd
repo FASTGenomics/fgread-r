@@ -4,7 +4,7 @@
 \alias{read_10xhdf5_to_seurat}
 \title{Read 10x hdf5 dataset into seurat.}
 \usage{
-read_10xhdf5_to_seurat(data_set)
+read_10xhdf5_to_seurat(ds_file)
 }
 \description{
 Read 10x hdf5 dataset into seurat.

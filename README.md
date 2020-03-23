@@ -1,170 +1,63 @@
 [![Build Status](https://travis-ci.org/FASTGenomics/fgread-r.svg?branch=master)](https://fastgenomics.github.io/fgread-r/docs/)
 
-# Description
+# FASTGenomics Reader Module for R
 
 This package implements convenience functions for loading datasets in the
 [FASTGenomics][fg] [analysis][fg_analysis] environment. The functions from this package
 will let you list and load datasets for which the analysis was defined.
 
-[fg]: https://beta.fastgenomics.org/webclient/
+[fg]: https://beta.fastgenomics.org
 [fg_analysis]: https://beta.fastgenomics.org/webclient/searchPage/analyses
 
-## Usage
+## Documentation
 
-### Listing datasets
+For the general documentation on how to use the reader, please visit our [FASTGenomics Documentation][docs].
 
-To list the datasets simply call the `fgread::get_datasets()` function
+For details on the available functions see the [API Documentation](https://fastgenomics.github.io/fgread-r/docs/).
 
-```R
-dsets_list <- fgread::get_datasets()
-```
+[docs]: https://beta.fastgenomics.org/docs
 
-The `dsets_list` would then contain the information about the location, format, title,
-etc. about of each dataset.
+## Limitations
 
-```
-[[1]]
-id: 1
-title: Loom dataset
-format: Loom
-path: ../tests/data/readers/dataset_0001
+### TSV/CSV Reader
 
-[[2]]
-id: 2
-title: Seurat Object dataset
-format: Seurat Object
-path: ../tests/data/readers/dataset_0002
-```
+Loading large files, especially if they are very sparse, in plain text format need a lot of memory and can be rather slow.
+For large datasets we recommend to use formats that support sparse data.
 
-Note, that `fgread::get_datasets()` does not load any of the datasets. It's purpose
-is to get a list of available datasets, from which you can select the ones you would
-like to load.
+### AnnData Reader
 
-### Loading a single dataset
+As the internal Seurat reader for AnnData fails to convert certain datasets (depending on scaling, normalization etc.), we provide a custom reader.
+This custom reader, however, only reads the `.X`, `.obs` and `.var` components of the AnnData object.
 
-To load a single dataset use `fgread::read_dataset`. The code below loads the first
-dataset from the list (the "Loom dataset") and returns a [Seurat][seurat] object
+## Known issues
 
-```R
-seurat <- fgread::read_dataset(dsets_list[[1]])
-```
+Please report the issues through [github][issues].
 
-To load the second dataset simply run
+[issues]: https://github.com/FASTGenomics/fgread-r/issues
 
-```R
-seurat2 <- fgread::read_dataset(dsets_list[[2]])
-```
-
-The `fgread::read_dataset` function resolves the underlying format of the dataset
-automatically, based on the `format` attributes contained in the `dsets_list[[1]]`.
-
-[seurat]: https://satijalab.org/seurat/
-
-### Loading multiple datasets
-
-Similarly, one can load multiple datasets with a single command:
-`fgread::read_datasets` (note the `s` at the end). The command loads all available data
-sets into _separate_ Seurat objects and returns a list of these objects (where the
-indices correspond to the indices from `fgread::get_datasets`).
-
-```R
-dsets <- fgread::read_datasets(dsets_list)
-```
-
-Now the `dsets` is a list containing two Seurat Objects
-
-```
-[[1]]
-An object of class Seurat
-16892 features across 298 samples within 1 assay
-Active assay: RNA (16892 features)
-
-[[2]]
-An object of class Seurat
-33538 features across 1222 samples within 1 assay
-Active assay: RNA (33538 features)
-```
-
-Used without any arguments `fgread::read_datasets()` loads all datasets
-
-```R
-dsets <- fgread::read_datasets()
-```
-
-```
-[[1]]
-An object of class Seurat
-16892 features across 298 samples within 1 assay
-Active assay: RNA (16892 features)
-
-[[2]]
-An object of class Seurat
-33538 features across 1222 samples within 1 assay
-Active assay: RNA (33538 features)
-```
-
-# Supported formats
-
-The following formats are supported by this package
-
-- [AnnData](https://github.com/theislab/anndata) (Experimental, see below)
-- [CellRanger (hdf5)](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/advanced/h5_matrices)
-- tab-separated text
-- comma-separated text
-- [Loom](http://loompy.org/) (Experimenta, see below)
-- [Seurat Object](https://satijalab.org/seurat/)
-
-## Limitations of readers
-
-### AnnData
-
-Importing AnnData is not generally available in Seurat v3.
-Import of AnnData only works if there is a CSR matrix in the AnnData object.
-For your convenience the FASTGenomics team provides this beta loading routine.
-However, be carefull.
-
-### Loom
-
-Importing loom files is currently unavailable in Seurat v3
-The beta loader provided by our team only reads the count table
-and the row/col attributes that can fit in a data frame structure (i.e.. all higher
-dimensional attributes are discarded).
-
-# Known issues
-
-- Loading a relatively modest Drop-Seq dataset (20k cell barcodes) uses around 10GB
-  peak memory. This could go over the 16GB limit with larger datasets.
-
-- There is a function for reading AnnData in Seurat but it's buggy and does not seem to
-  work on some test datasets. Perhaps this will be fixed in future releases of Seurat
-  but for now we use a custom implementation that only reads `.X`, `.obs` and `.var`
-  components. The function is also limited to count tables in the CSR format.
-
-# Development and testing
+## Development and testing
 
 Clone the repository along with the test data by running
 
 ```bash
-git clone git@github.com:FASTGenomics/fgread-r.git
-cd fgread-r
-git submodule init
-git submodule update
+git clone --recurse-submodules git@github.com:FASTGenomics/fgread-r.git
 ```
 
-Run R the `fgread-r` directory, install the devtools package (if you don't have it already)
+Then enter the `fgread-r` directory and install the dependencies with
 
 ```R
 install.packages("devtools")
-```
-
-And install the package dependencies
-
-```R
 devtools::install_deps(upgrade="never")
 ```
 
-Once the dependencies are there you can run the tests with
+To test the package use
 
 ```R
 devtools::test()
+```
+
+### Build Documentaion
+
+```R
+devtools::document()
 ```

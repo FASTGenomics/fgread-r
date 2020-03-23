@@ -24,6 +24,7 @@ a single Seurat object is returned.
 Optionally, you can provide a list of datasets or a single dataset to load to load only selected ones.
 }
 \examples{
+\donttest{
 # loads all datasets as seurat objects
 seurat <- read_datasets()
 
@@ -33,5 +34,6 @@ seurat <- read_datasets(dsets_list[c(1,2)])
 
 # loads only the firt dataset and returns a Seurat object
 seurat <- read_datasets(dsets_list[[1]])
+}
 
 }

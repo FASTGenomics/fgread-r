@@ -6,7 +6,7 @@
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 in \code{\link{read_datasets}} or \code{\link{read_dataset}}.}
 \usage{
-read_loom_to_seurat(data_set)
+read_loom_to_seurat(ds_file)
 }
 \description{
 Reading a loom dataset currently not implemented in Seurat v3.
