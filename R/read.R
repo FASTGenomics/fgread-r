@@ -122,6 +122,11 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
       pretty_df["expressionDataFileNames"] <- gsub(", ", "<br>", single_ds_df["expressionDataFileNames"])
       pretty_df["metaDataFileNames"] <- gsub(", ", "<br>", single_ds_df["metaDataFileNames"])
 
+      drop = c("expressionDataFileInfos", "metaDataFileInfos")
+      pretty_df = pretty_df[, !(names(pretty_df) %in% drop)]
+      pretty_df = pretty_df[!sapply(pretty_df, function(x) is.null(x[[1]]))]
+      pretty_df = pretty_df[!sapply(pretty_df, function(x) x[[1]]=="")]
+
       dt <- DT::datatable(t(pretty_df), escape = FALSE, colnames = rep("", ncol(t(pretty_df))), options = list(
         paging = FALSE,
         searching = FALSE,
@@ -153,6 +158,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
                "metaDataFileInfos"
       )
       df = ds_df[, !(names(ds_df) %in% drop)]
+
       if (length(dirs) > 0) {
         df$title <- paste0("<a href='", DS_URL_PREFIX, df$id, "' target='_blank'>", df$title, "</a>")
       }
