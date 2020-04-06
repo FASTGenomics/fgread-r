@@ -61,14 +61,34 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     ds_path <- file.path(dir, INFO_FILE_NAME)
     ds_info <- jsonlite::read_json(ds_path)
     ds_info["path"] <- dir
+    ds_info["numberOfExpressionDataFiles"] <- length(ds_info["expressionDataFileInfos"][[1]])
+    ds_info["numberOfMetaDataFiles"] <- length(ds_info["metaDataFileInfos"][[1]])
     ds_info["schemaVersion"] <- NULL
+    ds_info["expressionDataFileNames"] <- ""
+    ds_info["metaDataFileNames"] <- ""
     ds_list <- rbind(ds_list, ds_info)
   }
   ds_df <- data.frame(ds_list, row.names = seq_along(dirs))
 
   # sort colnames
-  sort_order <- c("title", "id", "format", "organism", "tissue", "numberOfCells", "numberOfGenes")
+  sort_order <- c(
+        "title",
+        "id",
+        "organism",
+        "tissue",
+        "numberOfCells",
+        "numberOfGenes",
+        "path",
+        "numberOfExpressionDataFiles",
+        "expressionDataFileNames",
+        "numberOfMetaDataFiles",
+        "metaDataFileNames",
+        "expressionDataFileInfos",
+        "metaDataFileInfos"
+  )
   col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
+  print(col_names_sorted)
+  print(colnames(ds_df))
   # construct empty dataframe if no datasets attached
   if (length(dirs) == 0) {
     ds_df <- setNames(data.frame(matrix(ncol = length(col_names_sorted), nrow = 0)), col_names_sorted)
