@@ -87,8 +87,6 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
         "metaDataFileInfos"
   )
   col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
-  print(col_names_sorted)
-  print(colnames(ds_df))
   # construct empty dataframe if no datasets attached
   if (length(dirs) == 0) {
     ds_df <- setNames(data.frame(matrix(ncol = length(col_names_sorted), nrow = 0)), col_names_sorted)
@@ -122,9 +120,21 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
 
   } else {
     # TODO: see above, no check for empty DS list
+    drop = c("expressionDataFileNames",
+             "metaDataFileNames"
+    )
+    ds_df = ds_df[, !(names(ds_df) %in% drop)]
 
     if (pretty) {
-      drop = c("description", "license", "preprocessing", "citation", "webLink")
+      drop = c("description",
+               "license",
+               "preprocessing",
+               "citation",
+               "webLink",
+               "file",
+               "expressionDataFileInfos",
+               "metaDataFileInfos"
+      )
       df = ds_df[, !(names(ds_df) %in% drop)]
       if (length(dirs) > 0) {
         df$title <- paste0("<a href='", DS_URL_PREFIX, df$id, "' target='_blank'>", df$title, "</a>")
