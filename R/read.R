@@ -117,7 +117,12 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     single_ds_df["metaDataFileNames"] <- paste(z, collapse=", ")
 
     if (pretty) {
-      dt <- DT::datatable(t(single_ds_df), escape = FALSE, colnames = rep("", ncol(t(single_ds_df))), options = list(
+      pretty_df <- single_ds_df
+
+      pretty_df["expressionDataFileNames"] <- gsub(", ", "<br>", single_ds_df["expressionDataFileNames"])
+      pretty_df["metaDataFileNames"] <- gsub(", ", "<br>", single_ds_df["metaDataFileNames"])
+
+      dt <- DT::datatable(t(pretty_df), escape = FALSE, colnames = rep("", ncol(t(pretty_df))), options = list(
         paging = FALSE,
         searching = FALSE,
         ordering = FALSE,
