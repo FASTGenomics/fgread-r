@@ -104,6 +104,18 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     single_ds_df = select_ds_id(ds, ds_df)
     single_ds_df$title <- paste0("<a href='", DS_URL_PREFIX, single_ds_df$id, "' target='_blank'>", single_ds_df$title, "</a>")
 
+    z <- NULL
+    for (expr in single_ds_df["expressionDataFileInfos"][[1]][[1]]) {
+        z <- c(z, expr$name)
+    }
+    single_ds_df["expressionDataFileNames"] <- paste(z, collapse=", ")
+
+    z <- NULL
+    for (expr in single_ds_df["metaDataFileInfos"][[1]][[1]]) {
+        z <- c(z, expr$name)
+    }
+    single_ds_df["metaDataFileNames"] <- paste(z, collapse=", ")
+
     if (pretty) {
       dt <- DT::datatable(t(single_ds_df), escape = FALSE, colnames = rep("", ncol(t(single_ds_df))), options = list(
         paging = FALSE,
