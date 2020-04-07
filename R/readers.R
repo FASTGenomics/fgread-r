@@ -192,14 +192,14 @@ DEFAULT_READERS_OLD <- list(
 )
 
 EXPERIMENTAL_READERS <- list(
-    "AnnData" = read_anndata_to_seurat_exp,
-    "Loom" = read_loom_to_seurat_exp
+    "h5ad" = read_anndata_to_seurat_exp,
+    "loom" = read_loom_to_seurat_exp
 )
 
 DEFAULT_READERS <- list(
     "loom" = read_loom_to_seurat,
     "rds" = read_seurat_to_seurat,
-    "h51d" = read_anndata_to_seurat,
+    "h5ad" = read_anndata_to_seurat,
     "hdf5" = read_10xhdf5_to_seurat,
     "h5" = read_10xhdf5_to_seurat,
     "tsv" = read_densetsv_to_seurat,
