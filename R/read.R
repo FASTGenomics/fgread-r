@@ -63,6 +63,9 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     ds_info["path"] <- dir
     ds_info["numberOfExpressionDataFiles"] <- length(ds_info["expressionDataFileInfos"][[1]])
     ds_info["numberOfMetaDataFiles"] <- length(ds_info["metaDataFileInfos"][[1]])
+    if (as.numeric(ds_info["schemaVersion"]) < 1) {
+      stop("The dataset schema version is <1, please use the deprecated funtions `get_datasets` and `read_dataset`")
+    }
     ds_info["schemaVersion"] <- NULL
     ds_info["expressionDataFileNames"] <- ""
     ds_info["metaDataFileNames"] <- ""
