@@ -258,16 +258,24 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
   file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
 
   tryCatch(
-    format = tail(strsplit(file, "\\.")[[1]], n=1),
+    {format <- tail(strsplit(file, "\\.")[[1]], n=1)},
     error=function(e) stop(glue::glue('The expression file "{file}" has no suffix.'))
   )
 
   ## find a matching reader
   supported_readers_str <- paste(names(readers), collapse = ", ")
   if (format %in% names(readers)) {
+    if (meta_count >= 1) {
+      if (meta_count == 1) {
+        print(glue::glue("There is {meta_count} metadata file in this dataset.\n"))
+      }
+      else {
+        print(glue::glue("There are {meta_count} metadata files in this dataset.\n"))
+      }
+      print(glue::glue("This metadata will not be integrated into the anndata object."))
+    }
     print(glue::glue('Loading dataset "{title}" in format "{format}" from directory "{path}"...'))
     file_path = file.path(path, file)
-    print(file_path)
     seurat <- readers[[format]](file_path)
 
     ## Calling this function here provides compatibility between various readers,
@@ -280,22 +288,10 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
     print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n\n'))
     return(seurat)
   }
-  else if (format == "Other") {
-    stop(glue::glue(
-            'The format of the dataset "{title}" is "{format}". ',
-            'Datasets with the "{format}" format are unsupported by this module and have to be loaded manually. ',
-            'For more information please see {DOCSURL}.'))
-  }
-  else if (format == "Not set") {
-    stop(glue::glue(
-            'The format of the dataset "{title}" is "{format}". ',
-            'Please specify the data format in the details of this dataset if you can modify the dataset or ask the dataset owner to do that. ',
-            'For more information please see {DOCSURL}.'))
-  }
   else {
     stop(glue::glue(
-            'Unsupported format: "{format}". ',
-            'For more information please see {DOCSURL}.'))
+            'Unsupported file format "{format}", use one of {supported_readers_str} or implement your ',
+            "own reading function. See {DOCSURL} for more information."))
   }
 }
 
