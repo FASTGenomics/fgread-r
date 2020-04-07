@@ -63,9 +63,6 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     ds_info["path"] <- dir
     ds_info["numberOfExpressionDataFiles"] <- length(ds_info["expressionDataFileInfos"][[1]])
     ds_info["numberOfMetaDataFiles"] <- length(ds_info["metaDataFileInfos"][[1]])
-    if (as.numeric(ds_info["schemaVersion"]) < 1) {
-      stop("The dataset schema version is <1, please use the deprecated funtions `get_datasets` and `read_dataset`")
-    }
     ds_info["schemaVersion"] <- NULL
     ds_info["expressionDataFileNames"] <- ""
     ds_info["metaDataFileNames"] <- ""
@@ -235,25 +232,42 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
 
   # get single dataset
   if (missing(ds)) {
-    single_df = ds_info(data_dir = data_dir, pretty = FALSE)
+    single_df <- ds_info(data_dir = data_dir, pretty = FALSE)
     # stopifnot(dim(single_df)[1]==1)
     if (dim(single_df)[1] != 1) {
       stop(glue::glue("There is more than one dataset available. Please select one by its ID or title."))
     }
   } else {
-    single_df = select_ds_id(ds, df = ds_info(data_dir = data_dir, pretty = FALSE))
+    single_df <- select_ds_id(ds, df = ds_info(data_dir = data_dir, pretty = FALSE))
   }
 
-  title = single_df$title[[1]]
-  format = single_df$format[[1]]
-  path = single_df$path[[1]]
-  file = single_df$file[[1]]
+  exp_count <- single_df$numberOfExpressionDataFiles[[1]]
+  meta_count <- single_df$numberOfMetaDataFiles[[1]]
+
+  if (exp_count == 0) {
+    stop("There is no expression data available in this data set.")
+  }
+  if (exp_count > 1) {
+    stop("There is more than one expression data available in this data set.\n",
+         "Currently we only provide reading functionality for one expression data file.\n",
+         "Please load the required data manually from the corresponding folder in /fastgenomics/data/.")
+  }
+
+  title <- single_df$title[[1]]
+  path <- single_df$path[[1]]
+  file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
+
+  tryCatch(
+    format = tail(strsplit(file, "\\.")[[1]], n=1),
+    error=function(e) stop(glue::glue('The expression file "{file}" has no suffix.'))
+  )
 
   ## find a matching reader
   supported_readers_str <- paste(names(readers), collapse = ", ")
   if (format %in% names(readers)) {
     print(glue::glue('Loading dataset "{title}" in format "{format}" from directory "{path}"...'))
     file_path = file.path(path, file)
+    print(file_path)
     seurat <- readers[[format]](file_path)
 
     ## Calling this function here provides compatibility between various readers,
