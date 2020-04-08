@@ -52,7 +52,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
   }
 
   # get all data set folders
-  dirs <- list.dirs(path = data_dir, full.names = T) # TODO: should be a seperate function (get_ds_paths) that also checks if there are DSs attached or not; see below
+  dirs <- list.dirs(path = data_dir, full.names = T, recursive = F) # TODO: should be a seperate function (get_ds_paths) that also checks if there are DSs attached or not; see below
   dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
 
   # create data frame with all data set informations
@@ -61,13 +61,31 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     ds_path <- file.path(dir, INFO_FILE_NAME)
     ds_info <- jsonlite::read_json(ds_path)
     ds_info["path"] <- dir
+    ds_info["numberOfExpressionDataFiles"] <- length(ds_info["expressionDataFileInfos"][[1]])
+    ds_info["numberOfMetaDataFiles"] <- length(ds_info["metaDataFileInfos"][[1]])
     ds_info["schemaVersion"] <- NULL
+    ds_info["expressionDataFileNames"] <- ""
+    ds_info["metaDataFileNames"] <- ""
     ds_list <- rbind(ds_list, ds_info)
   }
   ds_df <- data.frame(ds_list, row.names = seq_along(dirs))
 
   # sort colnames
-  sort_order <- c("title", "id", "format", "organism", "tissue", "numberOfCells", "numberOfGenes")
+  sort_order <- c(
+        "title",
+        "id",
+        "organism",
+        "tissue",
+        "numberOfCells",
+        "numberOfGenes",
+        "path",
+        "numberOfExpressionDataFiles",
+        "expressionDataFileNames",
+        "numberOfMetaDataFiles",
+        "metaDataFileNames",
+        "expressionDataFileInfos",
+        "metaDataFileInfos"
+  )
   col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
   # construct empty dataframe if no datasets attached
   if (length(dirs) == 0) {
@@ -84,10 +102,32 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     }
     # if ds is specified
     single_ds_df = select_ds_id(ds, ds_df)
-    single_ds_df$title <- paste0("<a href='", DS_URL_PREFIX, single_ds_df$id, "' target='_blank'>", single_ds_df$title, "</a>")
+
+    z <- NULL
+    for (expr in single_ds_df["expressionDataFileInfos"][[1]][[1]]) {
+      z <- c(z, expr$name)
+    }
+    single_ds_df["expressionDataFileNames"] <- paste(z, collapse = ", ")
+
+    z <- NULL
+    for (expr in single_ds_df["metaDataFileInfos"][[1]][[1]]) {
+      z <- c(z, expr$name)
+    }
+    single_ds_df["metaDataFileNames"] <- paste(z, collapse = ", ")
 
     if (pretty) {
-      dt <- DT::datatable(t(single_ds_df), escape = FALSE, colnames = rep("", ncol(t(single_ds_df))), options = list(
+      pretty_df <- single_ds_df
+      pretty_df$title <- paste0("<a href='", DS_URL_PREFIX, pretty_df$id, "' target='_blank'>", pretty_df$title, "</a>")
+
+      pretty_df["expressionDataFileNames"] <- gsub(", ", "<br>", single_ds_df["expressionDataFileNames"])
+      pretty_df["metaDataFileNames"] <- gsub(", ", "<br>", single_ds_df["metaDataFileNames"])
+
+      drop = c("expressionDataFileInfos", "metaDataFileInfos")
+      pretty_df = pretty_df[, !(names(pretty_df) %in% drop)]
+      pretty_df = pretty_df[!sapply(pretty_df, function(x) is.null(x[[1]]))]
+      pretty_df = pretty_df[!sapply(pretty_df, function(x) x[[1]] == "")]
+
+      dt <- DT::datatable(t(pretty_df), escape = FALSE, colnames = rep("", ncol(t(pretty_df))), options = list(
         paging = FALSE,
         searching = FALSE,
         ordering = FALSE,
@@ -102,10 +142,23 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
 
   } else {
     # TODO: see above, no check for empty DS list
+    drop = c("expressionDataFileNames",
+             "metaDataFileNames"
+    )
+    ds_df = ds_df[, !(names(ds_df) %in% drop)]
 
     if (pretty) {
-      drop = c("description", "license", "preprocessing", "citation", "webLink")
+      drop = c("description",
+               "license",
+               "preprocessing",
+               "citation",
+               "webLink",
+               "file",
+               "expressionDataFileInfos",
+               "metaDataFileInfos"
+      )
       df = ds_df[, !(names(ds_df) %in% drop)]
+
       if (length(dirs) > 0) {
         df$title <- paste0("<a href='", DS_URL_PREFIX, df$id, "' target='_blank'>", df$title, "</a>")
       }
@@ -179,23 +232,47 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
 
   # get single dataset
   if (missing(ds)) {
-    single_df = ds_info(data_dir = data_dir, pretty = FALSE)
+    single_df <- ds_info(data_dir = data_dir, pretty = FALSE)
     # stopifnot(dim(single_df)[1]==1)
     if (dim(single_df)[1] != 1) {
       stop(glue::glue("There is more than one dataset available. Please select one by its ID or title."))
     }
   } else {
-    single_df = select_ds_id(ds, df = ds_info(data_dir = data_dir, pretty = FALSE))
+    single_df <- select_ds_id(ds, df = ds_info(data_dir = data_dir, pretty = FALSE))
   }
 
-  title = single_df$title[[1]]
-  format = single_df$format[[1]]
-  path = single_df$path[[1]]
-  file = single_df$file[[1]]
+  exp_count <- single_df$numberOfExpressionDataFiles[[1]]
+  meta_count <- single_df$numberOfMetaDataFiles[[1]]
+
+  if (exp_count == 0) {
+    stop("There is no expression data available in this data set.")
+  }
+  if (exp_count > 1) {
+    stop("There is more than one expression data available in this data set.\n",
+         "Currently we only provide reading functionality for one expression data file.\n",
+         "Please load the required data manually from the corresponding folder in /fastgenomics/data/.")
+  }
+
+  title <- single_df$title[[1]]
+  path <- single_df$path[[1]]
+  file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
+
+  tryCatch({ format <- tail(strsplit(file, "\\.")[[1]], n = 1) },
+    error = function(e) stop(glue::glue('The expression file "{file}" has no suffix.'))
+  )
 
   ## find a matching reader
   supported_readers_str <- paste(names(readers), collapse = ", ")
   if (format %in% names(readers)) {
+    if (meta_count >= 1) {
+      if (meta_count == 1) {
+        print(glue::glue("There is {meta_count} metadata file in this dataset.\n"))
+      }
+      else {
+        print(glue::glue("There are {meta_count} metadata files in this dataset.\n"))
+      }
+      print(glue::glue("This metadata will not be integrated into the anndata object."))
+    }
     print(glue::glue('Loading dataset "{title}" in format "{format}" from directory "{path}"...'))
     file_path = file.path(path, file)
     seurat <- readers[[format]](file_path)
@@ -210,22 +287,10 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
     print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n\n'))
     return(seurat)
   }
-  else if (format == "Other") {
-    stop(glue::glue(
-            'The format of the dataset "{title}" is "{format}". ',
-            'Datasets with the "{format}" format are unsupported by this module and have to be loaded manually. ',
-            'For more information please see {DOCSURL}.'))
-  }
-  else if (format == "Not set") {
-    stop(glue::glue(
-            'The format of the dataset "{title}" is "{format}". ',
-            'Please specify the data format in the details of this dataset if you can modify the dataset or ask the dataset owner to do that. ',
-            'For more information please see {DOCSURL}.'))
-  }
   else {
     stop(glue::glue(
-            'Unsupported format: "{format}". ',
-            'For more information please see {DOCSURL}.'))
+            'Unsupported file format "{format}", use one of {supported_readers_str} or implement your ',
+            "own reading function. See {DOCSURL} for more information."))
   }
 }
 
@@ -264,6 +329,10 @@ setClass("DataSet",
 DataSet <- function(path) {
   id <- as.integer(tail(strsplit(path, "_")[[1]], n = 1))
   metadata <- jsonlite::read_json(file.path(path, INFO_FILE_NAME))
+  if (metadata$schemaVersion != "1.0") {
+    stop("This function is not supported in FASTGenomics anymore (Dataset schemaVersion != 1.0).\n",
+         "Please use the function `ds_info` or `load_data` instead.")
+  }
   return(new("DataSet",
                id = id,
                metadata = metadata,
@@ -304,7 +373,7 @@ setMethod(
 #' @export
 get_datasets <- function(data_dir = DATA_DIR) {
   .Deprecated("fgread::ds_info")
-  dirs <- list.dirs(path = data_dir, full.names = T)
+  dirs <- list.dirs(path = data_dir, full.names = T, recursive = F)
   dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
 
   data_sets = list()

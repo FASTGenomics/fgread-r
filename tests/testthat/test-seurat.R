@@ -1,34 +1,24 @@
 context("Loading into Seurat using load_data()")
 
 DATADIR <- "../data/all_datasets"
+readers <- DEFAULT_READERS
+supported_readers_str <- paste(names(readers), collapse = ", ")
 
-## list
-DATASETS <- list(
-    list(id = "dataset-f93640431b0e4835a55332mbrnepxlne", dim = c(16892, 298), title = "Loom dataset", format = "Loom"),
-    list(id = "dataset-f93640431b0e4835a55332r9ii3nzffn", dim = c(33538, 1222), title = "Seurat Object dataset", format = "Seurat Object"),
-    list(id = "dataset-f93640431b0e4835a55332figaqdiem3", dim = c(20, 10), title = "AnnData dataset", format = "AnnData"),
-    list(id = "dataset-f93640431b0e4835a55332bruktcoddp", dim = c(33538, 1222), title = "10x (hdf5) dataset", format = "10x (hdf5)"),
-    list(id = "dataset-f93640431b0e4835a5533200fet8a6jm", dim = c(99, 20000), title = "tab-separated text dataset", format = "tab-separated text"),
-    list(id = "dataset-f93640431b0e4835a55332ssdhigwux7", dim = c(1000, 30), title = "mtx legacy dataset", format = "10x (mtx)"),
-    list(id = "dataset-f93640431b0e4835a553327j4gmcofeu", dim = c(1000, 30), title = "mtx v3 dataset", format = "10x (mtx)"),
-    list(id = "dataset-f93640431b0e4835a55332k8vohrjpyv", dim = c(99, 499), title = "comma-separated text dataset", format = "comma-separated text"),
-    list(id = "dataset-f93640431b0e4835a55332pj5jogcig7", dim = c(99, 499), title = "tab-separated text variant dataset", format = "tab-separated text"),
-    list(id = "dataset-f93640431b0e4835a55332fpgkljaqdz", dim = c(20, 10), title = "AnnData dense dataset", format = "AnnData")
-)
-
-
-Map(
-    function(dset) {
-      test_that(glue::glue("Format {dset$format} loads"),
-                  suppressWarnings({
-        data_table <- fgread::ds_info(data_dir = DATADIR, pretty = FALSE)
-        print(dset$title)
-        seurat <- fgread::load_data(dset$title, experimental_readers = T, data_dir = DATADIR)
-        expect_equal(dim(seurat), dset$dim)
-        expect_equal(seurat@project.name, dset$title)
-        # expect_equal(seurat@misc$fastgenomics$metadata, data_table[[dset$id]]@metadata)
-        expect_equal(seurat@misc$fastgenomics$id, dset$id)
-      }))
-    },
-    DATASETS
-)
+test_that("Check equality of metadata in json and Seurat object", {
+    for (dir in list.dirs(path = DATADIR, recursive = F)) {
+        json_path <- file.path(dir, INFO_FILE_NAME)
+        json_info <- jsonlite::read_json(json_path)
+        if (length(json_info["expressionDataFileInfos"][[1]]) != 1) {
+            next
+        }
+        file <- json_info["expressionDataFileInfos"][[1]][[1]]$name
+        format <- tail(strsplit(file, "\\.")[[1]], n=1)
+        if (format %in% names(readers)) {
+            seurat <- fgread::load_data(json_info$title, experimental_readers = T, data_dir = dir)
+            expect_equal(dim(seurat)[[1]], json_info$numberOfGenes)
+            expect_equal(dim(seurat)[[2]], json_info$numberOfCells)
+            expect_equal(seurat@project.name, json_info$title)
+            expect_equal(seurat@misc$fastgenomics$id, json_info$id)
+        }
+  }
+})
