@@ -330,6 +330,10 @@ setClass("DataSet",
 DataSet <- function(path) {
   id <- as.integer(tail(strsplit(path, "_")[[1]], n = 1))
   metadata <- jsonlite::read_json(file.path(path, INFO_FILE_NAME))
+  if (metadata$schemaVersion != "1.0") {
+    stop("This function is not supported in FASTGenomics anymore (Dataset schemaVersion != 1.0).\n",
+         "Please use the function `ds_info` or `load_data` instead.")
+  }
   return(new("DataSet",
                id = id,
                metadata = metadata,
