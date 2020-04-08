@@ -4,7 +4,8 @@ DATADIR <- "../data/all_datasets/"
 
 test_that("Check the info function", {
   data_table <- fgread::ds_info(data_dir = DATADIR)
-  expect_equal(dim(data_table)[1], 12)
+  dirs <- list.dirs(path = DATADIR, recursive = F)
+  expect_equal(dim(data_table)[1], length(dirs))
 })
 
 test_that("Check the info function for one dataset", {
