@@ -52,7 +52,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
   }
 
   # get all data set folders
-  dirs <- list.dirs(path = data_dir, full.names = T) # TODO: should be a seperate function (get_ds_paths) that also checks if there are DSs attached or not; see below
+  dirs <- list.dirs(path = data_dir, full.names = T, recursive = F) # TODO: should be a seperate function (get_ds_paths) that also checks if there are DSs attached or not; see below
   dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
 
   # create data frame with all data set informations
@@ -374,7 +374,7 @@ setMethod(
 #' @export
 get_datasets <- function(data_dir = DATA_DIR) {
   .Deprecated("fgread::ds_info")
-  dirs <- list.dirs(path = data_dir, full.names = T)
+  dirs <- list.dirs(path = data_dir, full.names = T, recursive = F)
   dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
 
   data_sets = list()
