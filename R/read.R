@@ -102,7 +102,6 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     }
     # if ds is specified
     single_ds_df = select_ds_id(ds, ds_df)
-    single_ds_df$title <- paste0("<a href='", DS_URL_PREFIX, single_ds_df$id, "' target='_blank'>", single_ds_df$title, "</a>")
 
     z <- NULL
     for (expr in single_ds_df["expressionDataFileInfos"][[1]][[1]]) {
@@ -118,6 +117,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
 
     if (pretty) {
       pretty_df <- single_ds_df
+      pretty_df$title <- paste0("<a href='", DS_URL_PREFIX, pretty_df$id, "' target='_blank'>", pretty_df$title, "</a>")
 
       pretty_df["expressionDataFileNames"] <- gsub(", ", "<br>", single_ds_df["expressionDataFileNames"])
       pretty_df["metaDataFileNames"] <- gsub(", ", "<br>", single_ds_df["metaDataFileNames"])

@@ -6,6 +6,7 @@ test_that("Loading multiple datasets", suppressWarnings({
     dsets_list <- fgread::get_datasets(data_dir=DATADIR)
     sel <- c(1,2,3)
     dsets <- fgread::read_datasets(dsets_list[sel], experimental_readers=T)
+    print(dsets)
 
     expect_equal(length(dsets), length(sel))
     print(names(dsets))
