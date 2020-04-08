@@ -105,15 +105,15 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
 
     z <- NULL
     for (expr in single_ds_df["expressionDataFileInfos"][[1]][[1]]) {
-        z <- c(z, expr$name)
+      z <- c(z, expr$name)
     }
-    single_ds_df["expressionDataFileNames"] <- paste(z, collapse=", ")
+    single_ds_df["expressionDataFileNames"] <- paste(z, collapse = ", ")
 
     z <- NULL
     for (expr in single_ds_df["metaDataFileInfos"][[1]][[1]]) {
-        z <- c(z, expr$name)
+      z <- c(z, expr$name)
     }
-    single_ds_df["metaDataFileNames"] <- paste(z, collapse=", ")
+    single_ds_df["metaDataFileNames"] <- paste(z, collapse = ", ")
 
     if (pretty) {
       pretty_df <- single_ds_df
@@ -125,7 +125,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
       drop = c("expressionDataFileInfos", "metaDataFileInfos")
       pretty_df = pretty_df[, !(names(pretty_df) %in% drop)]
       pretty_df = pretty_df[!sapply(pretty_df, function(x) is.null(x[[1]]))]
-      pretty_df = pretty_df[!sapply(pretty_df, function(x) x[[1]]=="")]
+      pretty_df = pretty_df[!sapply(pretty_df, function(x) x[[1]] == "")]
 
       dt <- DT::datatable(t(pretty_df), escape = FALSE, colnames = rep("", ncol(t(pretty_df))), options = list(
         paging = FALSE,
@@ -257,9 +257,8 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
   path <- single_df$path[[1]]
   file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
 
-  tryCatch(
-    {format <- tail(strsplit(file, "\\.")[[1]], n=1)},
-    error=function(e) stop(glue::glue('The expression file "{file}" has no suffix.'))
+  tryCatch({ format <- tail(strsplit(file, "\\.")[[1]], n = 1) },
+    error = function(e) stop(glue::glue('The expression file "{file}" has no suffix.'))
   )
 
   ## find a matching reader
