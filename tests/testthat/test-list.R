@@ -24,9 +24,9 @@ test_that("Check equality of metadata in json and list", {
     json_path <- file.path(dir, INFO_FILE_NAME)
     json_info <- jsonlite::read_json(json_path)
     json_info["schemaVersion"] <- NULL
-    ds_info <- fgread::ds_info(json_info$title, output = T, pretty = F)
+    ds_info <- fgread::ds_info(json_info$title, output = T, pretty = F, data_dir = DATADIR)
     for (col in names(json_info)) {
-        expect_equivalent(json_info[col], ds_info[col][[1]])
+      expect_equivalent(json_info[col], ds_info[col][[1]])
     }
   }
 })
