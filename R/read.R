@@ -208,7 +208,11 @@ select_ds_id <- function(ds, df) {
 #'      format. Still experimental, by default an empty list
 #'
 #' @param experimental_readers Boolean whether FASTGenomics in-house experimental
-#       readers should be used. By default set to False. 
+#'       readers should be used. By default set to False. 
+#' 
+#' @param as_format Specifies which reader should be uses for this dataset. Overwrites the
+#' auto-detection of the format. Possible parameters are the file extensions of our
+#' supported data formats: "h5ad", "h5", "hdf5", "loom", "rds", "csv", "tsv".
 #'
 #' @return dataset loaded as a Seurat Object
 #'
@@ -219,7 +223,7 @@ select_ds_id <- function(ds, df) {
 #' }
 #'
 #' @export
-load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F) {
+load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F, as_format) {
 
   # update list of readers
   if (experimental_readers) {
@@ -257,9 +261,15 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
   path <- single_df$path[[1]]
   file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
 
-  tryCatch({ format <- tail(strsplit(file, "\\.")[[1]], n = 1) },
+  if (missing(as_format)) {
+    tryCatch({ format <- tolower(tail(strsplit(file, "\\.")[[1]], n = 1)) },
     error = function(e) stop(glue::glue('The expression file "{file}" has no suffix.'))
-  )
+    )
+  } else {
+    format <- tolower(as_format)
+  }
+  
+     
 
   ## find a matching reader
   supported_readers_str <- paste(names(readers), collapse = ", ")

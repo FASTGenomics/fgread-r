@@ -8,7 +8,8 @@ load_data(
   ds,
   data_dir = DATA_DIR,
   additional_readers = list(),
-  experimental_readers = F
+  experimental_readers = F,
+  as_format
 )
 }
 \arguments{
@@ -20,7 +21,12 @@ form.  Defaults to the directory provided by the FASTGenomics platform.}
 \item{additional_readers}{List to specify your own readers for the specific dataset
 format. Still experimental, by default an empty list}
 
-\item{experimental_readers}{Boolean whether FASTGenomics in-house experimental}
+\item{experimental_readers}{Boolean whether FASTGenomics in-house experimental
+readers should be used. By default set to False.}
+
+\item{as_format}{Specifies which reader should be uses for this dataset. Overwrites the
+auto-detection of the format. Possible parameters are the file extensions of our
+supported data formats: "h5ad", "h5", "hdf5", "loom", "rds", "csv", "tsv".}
 }
 \value{
 dataset loaded as a Seurat Object
