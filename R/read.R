@@ -127,13 +127,8 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
       pretty_df = pretty_df[!sapply(pretty_df, function(x) is.null(x[[1]]))]
       pretty_df = pretty_df[!sapply(pretty_df, function(x) x[[1]] == "")]
 
-      dt <- DT::datatable(t(pretty_df), escape = FALSE, colnames = rep("", ncol(t(pretty_df))), options = list(
-        paging = FALSE,
-        searching = FALSE,
-        ordering = FALSE,
-        info = FALSE
-      ))
-      IRdisplay::display(dt)
+      dt <- htmlTable::htmlTable(t(data.frame(pretty_df, row.names = NULL)), align = "l")
+      IRdisplay::display_html(dt)
     }
 
     if (output) {
@@ -162,11 +157,8 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
       if (length(dirs) > 0) {
         df$title <- paste0("<a href='", DS_URL_PREFIX, df$id, "' target='_blank'>", df$title, "</a>")
       }
-      dt <- DT::datatable(df, escape = FALSE, options = list(
-        paging = FALSE,
-        info = FALSE
-      ))
-      IRdisplay::display(dt)
+      dt <- htmlTable::htmlTable(df)
+      IRdisplay::display_html(dt)
     }
 
     if (output) {

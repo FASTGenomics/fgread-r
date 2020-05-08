@@ -4,12 +4,12 @@
 \alias{read_loom_to_seurat}
 \title{Reading a loom dataset currently not implemented in Seurat v3.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
-in \code{\link{read_datasets}} or \code{\link{read_dataset}}.}
+in \code{\link{load_data}}.}
 \usage{
 read_loom_to_seurat(ds_file)
 }
 \description{
 Reading a loom dataset currently not implemented in Seurat v3.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
-in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
+in \code{\link{load_data}}.
 }

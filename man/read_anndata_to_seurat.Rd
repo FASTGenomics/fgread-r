@@ -5,7 +5,7 @@
 \title{Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
 Please note that this might not work as expected.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
-in \code{\link{read_datasets}} or \code{\link{read_dataset}}.}
+in \code{\link{load_data}}.}
 \usage{
 read_anndata_to_seurat(ds_file)
 }
@@ -13,5 +13,5 @@ read_anndata_to_seurat(ds_file)
 Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
 Please note that this might not work as expected.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
-in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
+in \code{\link{load_data}}.
 }

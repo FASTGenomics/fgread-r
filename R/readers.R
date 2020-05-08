@@ -26,11 +26,11 @@ read_seurat_to_seurat <- function(ds_file) {
 
 #' Reading a loom dataset currently not implemented in Seurat v3.
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
-#' in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
+#' in \code{\link{load_data}}.
 read_loom_to_seurat <- function(ds_file) {
   stop(glue::glue(
         'Loading of loom files is currently not supported in Seurat v3. ',
-        'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
+        'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `load_data`. ',
         'For more information please see {DOCSURL}.'))
 }
 
@@ -79,10 +79,10 @@ read_loom_to_seurat_exp <- function(ds_file) {
 #' Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
 #' Please note that this might not work as expected.
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
-#' in \code{\link{read_datasets}} or \code{\link{read_dataset}}.
+#' in \code{\link{load_data}}.
 read_anndata_to_seurat <- function(ds_file) {
   warning(glue::glue('!!Importing AnnData is not always working as expected in Seurat v3 .',
-        'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `read_datasets` or `read_dataset`. ',
+        'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `load_data`. ',
         'For more information please see {DOCSURL}.'))
   return(Seurat::ReadH5AD(ds_file))
 }
