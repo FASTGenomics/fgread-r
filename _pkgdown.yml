@@ -5,10 +5,6 @@ reference:
     contents:
       - "ds_info"
       - "load_data"
-      - "get_datasets"
-      - "read_dataset"
-      - "read_datasets"
-      - "DataSet-class"
 
   - title: Available default readers
     desc: >-
