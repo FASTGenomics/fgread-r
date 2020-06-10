@@ -8,6 +8,12 @@ in \code{\link{load_data}}.}
 \usage{
 read_loom_to_seurat(ds_file)
 }
+\arguments{
+\item{ds_file}{The path to the dataset file.}
+}
+\value{
+A seurat Object.
+}
 \description{
 Reading a loom dataset currently not implemented in Seurat v3.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"

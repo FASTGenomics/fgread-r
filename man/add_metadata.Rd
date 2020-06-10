@@ -6,6 +6,14 @@
 \usage{
 add_metadata(seurat, ds_df)
 }
+\arguments{
+\item{seurat}{A seurat object.}
+
+\item{ds_df}{The dataframe containing the metadata for the Seurat object.}
+}
+\value{
+A Seurat object with added metadata.
+}
 \description{
 Adds some data from the metadata directly to the meta.data of the seurat object.
 }

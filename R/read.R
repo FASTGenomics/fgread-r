@@ -13,47 +13,19 @@ if (Sys.getenv("FG_URL") != "") {
 DOCSURL <- paste(FGURL, "/docs/", sep = "")
 DS_URL_PREFIX <- paste(FGURL, "/webclient/ui/#/datasets/detail-", sep = "")
 
-
-#' Get information on all available datasets in this analysis.
-#'
-#' The optional argument available under \code{data_dir}.  The function then looks for
-#' all directories matching the \code{".*/dataset_\\d{4}$"} pattern and constructs a
-#' data frame with all data sets.
-#'
-#' @param ds A single dataset ID or dataset title. If set, only this dataset will be displayed.
-#'
-#' @param pretty Boolean whether to display some nicely formatted output, by default True
-#'
-#' @param output Boolean whether to return a DataFrame or not, by default True
-#'
+#' Construct a dataframe of all availabe datasets
+#' 
 #' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
 #'     form.  Defaults to the directory provided by the FASTGenomics platform.
-#'
-#' @return A data frame containing all, or a single dataset (depends on ``ds`` and ``output``)
-#'
-#' @examples
-#' \donttest{
-#' dsets <- ds_info()
-#' dsets <- ds_info('Test loom data')
-#' }
-#'
-#' @export
-ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR) {
-
-  if (is.null(pretty)) {
-    pretty = !is.null(ds)
-  }
-  if (is.null(output)) {
-    output = is.null(ds)
-  }
-
-  if (!pretty & !output) {
-    warning('You have set "pretty" and "output" to false. Hence, this function will do/return nothing.')
-  }
-
+#' 
+#' @param ignore_empty Whether to ignore if no datasets are attached or not.
+#'      Defaults to TRUE.
+#' 
+#' @return A dataframe containing all dataset metadata
+#' 
+get_datasets_df <- function(data_dir = DATA_DIR, ignore_empty = T) {
   # get all data set folders
-  dirs <- list.dirs(path = data_dir, full.names = T, recursive = F) # TODO: should be a seperate function (get_ds_paths) that also checks if there are DSs attached or not; see below
-  dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
+  dirs <- get_ds_paths(data_dir = data_dir, ignore_empty = ignore_empty)
 
   # create data frame with all data set informations
   ds_list = list()
@@ -89,18 +61,59 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
   col_names_sorted <- c(sort_order, sort(setdiff(colnames(ds_df), sort_order)))
   # construct empty dataframe if no datasets attached
   if (length(dirs) == 0) {
-    ds_df <- setNames(data.frame(matrix(ncol = length(col_names_sorted), nrow = 0)), col_names_sorted)
+    ds_df <- stats::setNames(data.frame(matrix(ncol = length(col_names_sorted), nrow = 0)), col_names_sorted)
   } else {
     ds_df <- ds_df[col_names_sorted]
   }
 
+  return(ds_df)
+}
+
+
+#' Get information on all available datasets in this analysis.
+#'
+#' The optional argument available under \code{data_dir}.  The function then looks for
+#' all directories matching the \code{".*/dataset_\\d{4}$"} pattern and constructs a
+#' data frame with all data sets.
+#'
+#' @param ds A single dataset ID or dataset title. If set, only this dataset will be displayed.
+#'
+#' @param pretty Boolean whether to display some nicely formatted output, by default True
+#'
+#' @param output Boolean whether to return a DataFrame or not, by default True
+#'
+#' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
+#'     form.  Defaults to the directory provided by the FASTGenomics platform.
+#' 
+#' @param ignore_empty Whether to ignore if no datasets are attached or not.
+#'      Defaults to TRUE.
+#'
+#' @return A data frame containing all, or a single dataset (depends on ``ds`` and ``output``)
+#'
+#' @examples
+#' \donttest{
+#' dsets <- ds_info()
+#' dsets <- ds_info('Test loom data')
+#' }
+#'
+#' @export
+ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR, ignore_empty = T) {
+
+  if (is.null(pretty)) {
+    pretty = !is.null(ds)
+  }
+  if (is.null(output)) {
+    output = is.null(ds)
+  }
+
+  if (!pretty & !output) {
+    warning('You have set "pretty" and "output" to false. Hence, this function will do/return nothing.')
+  }
+
   # create output and display 
   if (!missing(ds)) {
-    if (length(dirs) == 0) {
-      # TODO: This check is only performed if ds ist set, should be part of the get_ds_paths function
-      stop("There are no datasets in your analysis")
-    }
     # if ds is specified
+    ds_df <- get_datasets_df(data_dir = data_dir, ignore_empty = F)
     single_ds_df = select_ds_id(ds, ds_df)
 
     z <- NULL
@@ -136,7 +149,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     }
 
   } else {
-    # TODO: see above, no check for empty DS list
+    ds_df <- get_datasets_df(data_dir = data_dir, ignore_empty = T)
     drop = c("expressionDataFileNames",
              "metaDataFileNames"
     )
@@ -154,7 +167,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
       )
       df = ds_df[, !(names(ds_df) %in% drop)]
 
-      if (length(dirs) > 0) {
+      if (dim(df)[1] > 0) {
         df$title <- paste0("<a href='", DS_URL_PREFIX, df$id, "' target='_blank'>", df$title, "</a>")
       }
       dt <- htmlTable::htmlTable(df)
@@ -194,7 +207,7 @@ select_ds_id <- function(ds, df) {
 #' @param ds A single dataset ID or dataset title.
 #'
 #' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
-#'     form.  Defaults to the directory provided by the FASTGenomics platform. 
+#'     form. Defaults to the directory provided by the FASTGenomics platform. 
 #'
 #' @param additional_readers List to specify your own readers for the specific dataset 
 #'      format. Still experimental, by default an empty list
@@ -216,7 +229,6 @@ select_ds_id <- function(ds, df) {
 #'
 #' @export
 load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F, as_format) {
-
   # update list of readers
   if (experimental_readers) {
     readers <- utils::modifyList(DEFAULT_READERS, EXPERIMENTAL_READERS)
@@ -228,13 +240,13 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
 
   # get single dataset
   if (missing(ds)) {
-    single_df <- ds_info(data_dir = data_dir, pretty = FALSE)
+    single_df <- ds_info(data_dir = data_dir, pretty = FALSE, ignore_empty = F)
     # stopifnot(dim(single_df)[1]==1)
     if (dim(single_df)[1] != 1) {
-      stop(glue::glue("There is more than one dataset available. Please select one by its ID or title."))
+      stop("There is more than one dataset available. Please select one by its ID or title.")
     }
   } else {
-    single_df <- select_ds_id(ds, df = ds_info(data_dir = data_dir, pretty = FALSE))
+    single_df <- select_ds_id(ds, df = ds_info(data_dir = data_dir, pretty = FALSE, ignore_empty = F))
   }
 
   exp_count <- single_df$numberOfExpressionDataFiles[[1]]
@@ -254,7 +266,7 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
   file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
 
   if (missing(as_format)) {
-    tryCatch({ format <- tolower(tail(strsplit(file, "\\.")[[1]], n = 1)) },
+    tryCatch({ format <- tolower(tools::file_ext(file)) },
     error = function(e) stop(glue::glue('The expression file "{file}" has no suffix.'))
     )
   } else {
@@ -295,6 +307,13 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
 }
 
 #' Adds some data from the metadata directly to the meta.data of the seurat object.
+#' 
+#' @param seurat A seurat object.
+#' 
+#' @param ds_df The dataframe containing the metadata for the Seurat object.
+#' 
+#' @return A Seurat object with added metadata.
+#' 
 add_metadata <- function(seurat, ds_df) {
 
   title = ds_df$title[[1]]
@@ -308,4 +327,31 @@ add_metadata <- function(seurat, ds_df) {
   seurat@meta.data$fg_dataset_id <- as.factor(ds_df$id[[1]])
   seurat@misc$fastgenomics = list(metadata = metadata, id = ds_df$id[[1]])
   return(seurat)
+}
+
+#' Get paths of all available datasets
+#' 
+#' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
+#'     form. Defaults to the directory provided by the FASTGenomics platform.
+#' 
+#' @param ignore_empty Whether to ignore if no datasets are attached or not.
+#'     Defaults to TRUE.
+#' 
+#' @return A list of dataset directories
+#' 
+get_ds_paths <- function(data_dir, ignore_empty = T) {
+  dirs <- list.dirs(path = data_dir, full.names = T, recursive = F)
+  dirs <- dirs[grepl(".*/dataset_\\d{4}$", dirs)]
+
+  if (length(dirs) == 0) {
+    if (ignore_empty) {
+      warning("There are no datasets attached to this analysis.")
+    }
+    else {
+      stop("There are no datasets attached to this analysis.")
+    }
+  }
+
+  return(dirs)
+
 }

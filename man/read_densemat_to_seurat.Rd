@@ -7,6 +7,14 @@ here we need to unpack the dataset before reading it}
 \usage{
 read_densemat_to_seurat(ds_file, sep)
 }
+\arguments{
+\item{ds_file}{The path to the dataset file.}
+
+\item{sep}{The column seperator (e.g. tab or comma)}
+}
+\value{
+A seurat Object.
+}
 \description{
 Read dense matrix
 here we need to unpack the dataset before reading it
