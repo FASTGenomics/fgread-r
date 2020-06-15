@@ -9,7 +9,7 @@ ds_info(
   pretty = NULL,
   output = NULL,
   data_dir = DATA_DIR,
-  ignore_empty = T
+  ignore_empty = TRUE
 )
 }
 \arguments{

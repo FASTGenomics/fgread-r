@@ -2,9 +2,9 @@
 % Please edit documentation in R/read.R
 \name{get_datasets_df}
 \alias{get_datasets_df}
-\title{Construct a dataframe of alla vailabe datasets}
+\title{Construct a dataframe of all availabe datasets}
 \usage{
-get_datasets_df(data_dir = DATA_DIR, ignore_empty = T)
+get_datasets_df(data_dir = DATA_DIR, ignore_empty = TRUE)
 }
 \arguments{
 \item{data_dir}{The directory containing sub-folders of the \code{"dataset_xxxx"}
@@ -17,5 +17,5 @@ Defaults to TRUE.}
 A dataframe containing all dataset metadata
 }
 \description{
-Construct a dataframe of alla vailabe datasets
+Construct a dataframe of all availabe datasets
 }

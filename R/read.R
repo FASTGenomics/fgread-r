@@ -23,7 +23,7 @@ DS_URL_PREFIX <- paste(FGURL, "/webclient/ui/#/datasets/detail-", sep = "")
 #' 
 #' @return A dataframe containing all dataset metadata
 #' 
-get_datasets_df <- function(data_dir = DATA_DIR, ignore_empty = T) {
+get_datasets_df <- function(data_dir = DATA_DIR, ignore_empty = TRUE) {
   # get all data set folders
   dirs <- get_ds_paths(data_dir = data_dir, ignore_empty = ignore_empty)
 
@@ -97,7 +97,7 @@ get_datasets_df <- function(data_dir = DATA_DIR, ignore_empty = T) {
 #' }
 #'
 #' @export
-ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR, ignore_empty = T) {
+ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR, ignore_empty = TRUE) {
 
   if (is.null(pretty)) {
     pretty = !is.null(ds)
@@ -113,7 +113,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
   # create output and display 
   if (!missing(ds)) {
     # if ds is specified
-    ds_df <- get_datasets_df(data_dir = data_dir, ignore_empty = F)
+    ds_df <- get_datasets_df(data_dir = data_dir, ignore_empty = FALSE)
     single_ds_df = select_ds_id(ds, ds_df)
 
     z <- NULL
@@ -149,7 +149,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     }
 
   } else {
-    ds_df <- get_datasets_df(data_dir = data_dir, ignore_empty = T)
+    ds_df <- get_datasets_df(data_dir = data_dir, ignore_empty = ignore_empty)
     drop = c("expressionDataFileNames",
              "metaDataFileNames"
     )
