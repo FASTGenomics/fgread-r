@@ -4,7 +4,13 @@
 \alias{ds_info}
 \title{Get information on all available datasets in this analysis.}
 \usage{
-ds_info(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR)
+ds_info(
+  ds = NULL,
+  pretty = NULL,
+  output = NULL,
+  data_dir = DATA_DIR,
+  ignore_empty = TRUE
+)
 }
 \arguments{
 \item{ds}{A single dataset ID or dataset title. If set, only this dataset will be displayed.}
@@ -15,6 +21,9 @@ ds_info(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR)
 
 \item{data_dir}{The directory containing sub-folders of the \code{"dataset_xxxx"}
 form.  Defaults to the directory provided by the FASTGenomics platform.}
+
+\item{ignore_empty}{Whether to ignore if no datasets are attached or not.
+Defaults to TRUE.}
 }
 \value{
 A data frame containing all, or a single dataset (depends on \code{ds} and \code{output})

@@ -12,6 +12,12 @@ potential bottleneck for larger datasets.}
 \usage{
 read_loom_to_seurat_exp(ds_file)
 }
+\arguments{
+\item{ds_file}{The path to the dataset file.}
+}
+\value{
+A seurat Object.
+}
 \description{
 Read a loom dataset with the experimental FASTGenomics reader.
 Importing loom files is currently unavailable in Seurat v3.

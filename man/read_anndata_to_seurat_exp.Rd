@@ -9,6 +9,12 @@ This custom reader, however, only reads the \code{.X}, \code{.obs} and \code{.va
 \usage{
 read_anndata_to_seurat_exp(ds_file)
 }
+\arguments{
+\item{ds_file}{The path to the dataset file.}
+}
+\value{
+A seurat Object.
+}
 \description{
 Read AnnData to Seurat with experimental FASTGenomics reader.
 Importing AnnData is not always working as expected in Seurat v3

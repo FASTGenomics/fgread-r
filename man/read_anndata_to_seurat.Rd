@@ -9,6 +9,12 @@ in \code{\link{load_data}}.}
 \usage{
 read_anndata_to_seurat(ds_file)
 }
+\arguments{
+\item{ds_file}{The path to the dataset file.}
+}
+\value{
+A seurat Object.
+}
 \description{
 Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
 Please note that this might not work as expected.

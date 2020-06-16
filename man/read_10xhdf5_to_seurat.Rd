@@ -6,6 +6,12 @@
 \usage{
 read_10xhdf5_to_seurat(ds_file)
 }
+\arguments{
+\item{ds_file}{The path to the dataset file.}
+}
+\value{
+A seurat Object.
+}
 \description{
 Read 10x hdf5 dataset into seurat.
 }

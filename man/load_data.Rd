@@ -16,7 +16,7 @@ load_data(
 \item{ds}{A single dataset ID or dataset title.}
 
 \item{data_dir}{The directory containing sub-folders of the \code{"dataset_xxxx"}
-form.  Defaults to the directory provided by the FASTGenomics platform.}
+form. Defaults to the directory provided by the FASTGenomics platform.}
 
 \item{additional_readers}{List to specify your own readers for the specific dataset
 format. Still experimental, by default an empty list}

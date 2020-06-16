@@ -12,6 +12,15 @@ canonize_id <- function(metadata, regex, to_name) {
 
 #' a helper function that constructs a seurat object from an expression matrix, cell &
 #' gene metadata.  Used to read loom and AnnData files
+#' 
+#' @param matrix The path to the expression matrix file.
+#' 
+#' @param cell_metadata The path to the cell metadata file.
+#' 
+#' @param gene_metadata The path to the gene metadata file.
+#' 
+#' @return A Seurat object
+#' 
 matrix_to_seurat <- function(matrix, cell_metadata, gene_metadata) {
   seurat <- Seurat::CreateSeuratObject(counts = matrix, min.cells = 0, min.features = 0)
   Seurat::AddMetaData(seurat, metadata = cell_metadata)
@@ -20,6 +29,11 @@ matrix_to_seurat <- function(matrix, cell_metadata, gene_metadata) {
 }
 
 #' Read a Seurat object.
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A Seurat Object
+#' 
 read_seurat_to_seurat <- function(ds_file) {
   return(readRDS(ds_file))
 }
@@ -27,6 +41,11 @@ read_seurat_to_seurat <- function(ds_file) {
 #' Reading a loom dataset currently not implemented in Seurat v3.
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 #' in \code{\link{load_data}}.
+#'
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A seurat Object.
+#' 
 read_loom_to_seurat <- function(ds_file) {
   stop(glue::glue(
         'Loading of loom files is currently not supported in Seurat v3. ',
@@ -41,6 +60,11 @@ read_loom_to_seurat <- function(ds_file) {
 #' dimensional attributes are discarded). To keep the implementation simple we read the
 #' whole object into memory, including the dense count matrix.  This could be a
 #' potential bottleneck for larger datasets.
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A seurat Object.
+#' 
 read_loom_to_seurat_exp <- function(ds_file) {
 
   warning(
@@ -80,6 +104,11 @@ read_loom_to_seurat_exp <- function(ds_file) {
 #' Please note that this might not work as expected.
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 #' in \code{\link{load_data}}.
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A seurat Object.
+#' 
 read_anndata_to_seurat <- function(ds_file) {
   warning(glue::glue('!!Importing AnnData is not always working as expected in Seurat v3 .',
         'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `load_data`. ',
@@ -92,6 +121,11 @@ read_anndata_to_seurat <- function(ds_file) {
 #' Importing AnnData is not always working as expected in Seurat v3
 #' For your convenience the FASTGenomics team provides this beta loading routine.
 #' This custom reader, however, only reads the `.X`, `.obs` and `.var` components of the AnnData object.
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A seurat Object.
+#' 
 read_anndata_to_seurat_exp <- function(ds_file) {
 
   warning(
@@ -128,6 +162,11 @@ read_anndata_to_seurat_exp <- function(ds_file) {
 
 
 #' Read 10x hdf5 dataset into seurat.
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A seurat Object.
+#' 
 read_10xhdf5_to_seurat <- function(ds_file) {
   matrix <- Seurat::Read10X_h5(ds_file)
   seurat <- Seurat::CreateSeuratObject(counts = matrix, min.cells = 0, min.features = 0)
@@ -136,31 +175,40 @@ read_10xhdf5_to_seurat <- function(ds_file) {
 
 
 #' Read 10x mtx (mex) dataset to seurat.
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A seurat Object.
+#' 
 read_10xmtx_to_seurat <- function(ds_file) {
   dir = dirname(ds_file)
-  list_files <- list.files(dir)
-  suffix <- tail(list_files[[1]], 3)
-  if (suffix == '.gz') {
-    data <- Seurat::Read10X(data.dir = dir)
-    seurat <- Seurat::CreateSeuratObject(
-      counts = data$`Gene Expression`, min.cells = 0, min.features = 0)
-  }
-  else {
-    expression_matrix <- Seurat::Read10X(data.dir = dir)
-    seurat <- Seurat::CreateSeuratObject(
-      counts = expression_matrix, min.cells = 0, min.features = 0)
-  }
+  expression_matrix <- Seurat::Read10X(data.dir = dir)
+  seurat <- Seurat::CreateSeuratObject(
+  counts = expression_matrix, min.cells = 0, min.features = 0)
+
   return(seurat)
 }
 
 
+
+
 #' Read dense matrix in csv form
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A seurat Object.
+#' 
 read_densecsv_to_seurat <- function(ds_file) {
   return(read_densemat_to_seurat(ds_file, ","))
 }
 
 
 #' Read dense matrix in tsv form
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @return A seurat Object.
+#' 
 read_densetsv_to_seurat <- function(ds_file) {
   return(read_densemat_to_seurat(ds_file, "\t"))
 }
@@ -168,11 +216,18 @@ read_densetsv_to_seurat <- function(ds_file) {
 
 #' Read dense matrix
 #' here we need to unpack the dataset before reading it
+#' 
+#' @param ds_file The path to the dataset file.
+#' 
+#' @param sep The column seperator (e.g. tab or comma)
+#' 
+#' @return A seurat Object.
+#' 
 read_densemat_to_seurat <- function(ds_file, sep) {
   x <- data.table::fread(ds_file, sep = sep, header = F, skip = 1, na.strings = NULL)
   genes <- x[[1]]
   cells <- colnames(data.table::fread(ds_file, sep = sep, header = T, nrows = 0))
-  cells <- tail(cells, dim(x)[[2]] - 1) # ignore column name of genes, if present
+  cells <- utils::tail(cells, dim(x)[[2]] - 1) # ignore column name of genes, if present
   matrix <- as.matrix(x[, 2:dim(x)[2]])
   dimnames(matrix) <- list(genes, cells)
   spmatrix <- Matrix::Matrix(matrix, sparse = T)
@@ -180,16 +235,6 @@ read_densemat_to_seurat <- function(ds_file, sep) {
   return(seurat)
 }
 
-
-DEFAULT_READERS_OLD <- list(
-    "Loom" = read_loom_to_seurat,
-    "Seurat Object" = read_seurat_to_seurat,
-    "AnnData" = read_anndata_to_seurat,
-    "10x (hdf5)" = read_10xhdf5_to_seurat,
-    "10x (mtx)" = read_10xmtx_to_seurat,
-    "tab-separated text" = read_densetsv_to_seurat,
-    "comma-separated text" = read_densecsv_to_seurat
-)
 
 EXPERIMENTAL_READERS <- list(
     "h5ad" = read_anndata_to_seurat_exp,

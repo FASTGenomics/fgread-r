@@ -6,6 +6,12 @@
 \usage{
 read_seurat_to_seurat(ds_file)
 }
+\arguments{
+\item{ds_file}{The path to the dataset file.}
+}
+\value{
+A Seurat Object
+}
 \description{
 Read a Seurat object.
 }
