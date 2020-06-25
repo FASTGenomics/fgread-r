@@ -102,7 +102,8 @@ read_loom_to_seurat_exp <- function(ds_file) {
 
 #' Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
 #' Please note that this might not work as expected.
-#' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
+#' For your convenience we implemented importing with SeuratDisk for h5ad files from Anndata>=0.7.3.
+#' Alternatively, you can use our experimental reader by setting "experimental_readers=TRUE"
 #' in \code{\link{load_data}}.
 #' 
 #' @param ds_file The path to the dataset file.
@@ -116,15 +117,14 @@ read_anndata_to_seurat <- function(ds_file) {
   seurat = tryCatch({
       seurat <- Seurat::ReadH5AD(ds_file)
   }, error = function(e) {
-      warning(glue::glue('Import of newest Anndata version requires to install the experimental `SeuratDisk` library from github.\n')
-      if (!requireNamespace("remotes", quietly = TRUE)) {
-          install.packages("remotes")
-      }
-      remotes::install_github("mojaveazure/seurat-disk")
-      library(SeuratDisk)
-      print(glue::glue('Converting to intermediate file `/fastgenomics/analysis/data_intermediate.h5seurat`.'))
-      Convert(ds_file, dest = "/fastgenomics/analysis/data_intermediate.h5seurat", overwrite = F)
-      seurat <- LoadH5Seurat("/fastgenomics/analysis/data_intermediate.h5seurat")
+      warning(glue::glue('!\nImport with `Seurat::ReadH5AD` failed.\n',
+                         'Trying again with the `SeuratDisk` library.\n!\n'))
+      # # install commit from June 25
+      # remotes::install_github("mojaveazure/seurat-disk@02c51247e58d6aa9bd694b3c1470143e2116876c")
+      # library(SeuratDisk)
+      print(glue::glue('Converting h5ad to intermediate file `/fastgenomics/analysis/data_intermediate.h5seurat`.'))
+      SeuratDisk::Convert(ds_file, dest = "/fastgenomics/analysis/data_intermediate.h5seurat", overwrite = T)
+      seurat <- SeuratDisk::LoadH5Seurat("/fastgenomics/analysis/data_intermediate.h5seurat")
   })
   return(seurat)
 }
