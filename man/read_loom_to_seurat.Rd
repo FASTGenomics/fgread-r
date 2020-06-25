@@ -2,7 +2,7 @@
 % Please edit documentation in R/readers.R
 \name{read_loom_to_seurat}
 \alias{read_loom_to_seurat}
-\title{Reading a loom dataset currently not implemented in Seurat v3.
+\title{Reading a loom dataset in Seurat v3 uses loomR and may not work as expected.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 in \code{\link{load_data}}.}
 \usage{
@@ -15,7 +15,7 @@ read_loom_to_seurat(ds_file)
 A seurat Object.
 }
 \description{
-Reading a loom dataset currently not implemented in Seurat v3.
+Reading a loom dataset in Seurat v3 uses loomR and may not work as expected.
 For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 in \code{\link{load_data}}.
 }

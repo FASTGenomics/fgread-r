@@ -4,7 +4,8 @@
 \alias{read_anndata_to_seurat}
 \title{Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
 Please note that this might not work as expected.
-For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
+For your convenience we implemented importing with SeuratDisk for h5ad files from Anndata>=0.7.3.
+Alternatively, you can use our experimental reader by setting "experimental_readers=TRUE"
 in \code{\link{load_data}}.}
 \usage{
 read_anndata_to_seurat(ds_file)
@@ -18,6 +19,7 @@ A seurat Object.
 \description{
 Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
 Please note that this might not work as expected.
-For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
+For your convenience we implemented importing with SeuratDisk for h5ad files from Anndata>=0.7.3.
+Alternatively, you can use our experimental reader by setting "experimental_readers=TRUE"
 in \code{\link{load_data}}.
 }
