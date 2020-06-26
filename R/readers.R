@@ -128,20 +128,20 @@ read_anndata_to_seurat <- function(ds_file) {
     "!!!\n"))
 
   intermediate <- file.path(getwd(), "intermediate_data.h5seurat")
-  seurat = tryCatch({
-    seurat <- Seurat::ReadH5AD(ds_file)
+  seurat <- tryCatch({
+    return(Seurat::ReadH5AD(ds_file))
   }, error = function(e) {
     warning(
       "!!!\n",
       'Import with `Seurat::ReadH5AD` failed.\n',
       'Trying again with the `SeuratDisk` library.\n',
       "!!!\n")
-
     print(glue::glue('Converting h5ad to intermediate file `{intermediate}`.\n'))
     SeuratDisk::Convert(ds_file, dest = intermediate, overwrite = T)
     seurat <- SeuratDisk::LoadH5Seurat(intermediate)
+    unlink(intermediate)
+    return(seurat)
   })
-  try(unlink(intermediate))
   return(seurat)
 }
 
