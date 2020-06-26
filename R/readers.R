@@ -127,7 +127,7 @@ read_anndata_to_seurat <- function(ds_file) {
     'For more information please see {DOCSURL}.\n',
     "!!!\n"))
 
-  intermediate <- file.path(getwd(), "data_intermediate.h5seurat")
+  intermediate <- file.path(getwd(), "intermediate_data.h5seurat")
   seurat = tryCatch({
     seurat <- Seurat::ReadH5AD(ds_file)
   }, error = function(e) {
@@ -140,11 +140,8 @@ read_anndata_to_seurat <- function(ds_file) {
     print(glue::glue('Converting h5ad to intermediate file `{intermediate}`.\n'))
     SeuratDisk::Convert(ds_file, dest = intermediate, overwrite = T)
     seurat <- SeuratDisk::LoadH5Seurat(intermediate)
-    # unlink(intermediate) #TODO: Warum Fehler wenn Zwischendatei hier gelöscht wird??? nicht richtig geschlossen?
   })
-  if (file.exists(intermediate)) {
-    unlink(intermediate)
-  }
+  try(unlink(intermediate))
   return(seurat)
 }
 
