@@ -38,7 +38,7 @@ read_seurat_to_seurat <- function(ds_file) {
   return(readRDS(ds_file))
 }
 
-#' Reading a loom dataset currently not implemented in Seurat v3.
+#' Reading a loom dataset in Seurat v3 uses loomR and may not work as expected.
 #' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
 #' in \code{\link{load_data}}.
 #'
@@ -47,14 +47,20 @@ read_seurat_to_seurat <- function(ds_file) {
 #' @return A seurat Object.
 #' 
 read_loom_to_seurat <- function(ds_file) {
-  stop(glue::glue(
-        'Loading of loom files is currently not supported in Seurat v3. ',
-        'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `load_data`. ',
-        'For more information please see {DOCSURL}.'))
+
+  warning(glue::glue(
+    '!!!\n',
+    'Importing Loom is not always working as expected in Seurat v3.\n',
+    'If you encounter any problems you can use our FASTGenomics experimental ',
+    'reader by setting "experimental_readers=TRUE" in `load_data`.\n',
+    'For more information please see {DOCSURL}.\n',
+    '!!!\n'))
+  loom <- loomR::connect(filename = ds_file, mode = "r")
+  return(Seurat::as.Seurat(loom))
 }
 
 #' Read a loom dataset with the experimental FASTGenomics reader.
-#' Importing loom files is currently unavailable in Seurat v3.
+#' Importing Loom is not always working as expected in Seurat v3.
 #' This beta loader provided by FASTGenomics only reads the count table
 #' and the row/col attributes that can fit in a data frame structure (i.e. all higher
 #' dimensional attributes are discarded). To keep the implementation simple we read the
@@ -68,10 +74,12 @@ read_loom_to_seurat <- function(ds_file) {
 read_loom_to_seurat_exp <- function(ds_file) {
 
   warning(
-      "!! Importing loom files is currently unavailable in Seurat v3 !! ",
-      "For your convenience the FASTGenomics team provides this beta loading routine. ",
+      "!!!\n",
+      "Importing Loom is not always working as expected in Seurat v3.\n",
+      "For your convenience the FASTGenomics team provides this beta loading routine.\n",
       "In case of problems please consider using another format or implement your own loading routine.\n",
-          call. = TRUE, immediate. = TRUE)
+      "!!!\n",
+      call. = TRUE, immediate. = TRUE)
 
   file <- rhdf5::H5Fopen(ds_file, flags = "H5F_ACC_RDONLY")
   contents <- rhdf5::h5dump(file)
@@ -102,7 +110,8 @@ read_loom_to_seurat_exp <- function(ds_file) {
 
 #' Read AnnData to Seurat with Seurat's function \code{\link{ReadH5AD}}.
 #' Please note that this might not work as expected.
-#' For your convenience we implemented experimental readers that you can use by setting "experimental_readers=TRUE"
+#' For your convenience we implemented importing with SeuratDisk for h5ad files from Anndata>=0.7.3.
+#' Alternatively, you can use our experimental reader by setting "experimental_readers=TRUE"
 #' in \code{\link{load_data}}.
 #' 
 #' @param ds_file The path to the dataset file.
@@ -110,10 +119,30 @@ read_loom_to_seurat_exp <- function(ds_file) {
 #' @return A seurat Object.
 #' 
 read_anndata_to_seurat <- function(ds_file) {
-  warning(glue::glue('!!Importing AnnData is not always working as expected in Seurat v3 .',
-        'You can use our FASTGenomics experimental reader by setting "experimental_readers=TRUE" in `load_data`. ',
-        'For more information please see {DOCSURL}.'))
-  return(Seurat::ReadH5AD(ds_file))
+  warning(glue::glue(
+    "!!!\n",
+    'Importing AnnData is not always working as expected in Seurat v3.\n',
+    'If you encounter any problems you can use our FASTGenomics experimental ',
+    'reader by setting "experimental_readers=TRUE" in `load_data`.\n',
+    'For more information please see {DOCSURL}.\n',
+    "!!!\n"))
+
+  intermediate <- file.path(getwd(), "intermediate_data.h5seurat")
+  seurat <- tryCatch({
+    return(Seurat::ReadH5AD(ds_file))
+  }, error = function(e) {
+    warning(
+      "!!!\n",
+      'Import with `Seurat::ReadH5AD` failed.\n',
+      'Trying again with the `SeuratDisk` library.\n',
+      "!!!\n")
+    print(glue::glue('Converting h5ad to intermediate file `{intermediate}`.\n'))
+    SeuratDisk::Convert(ds_file, dest = intermediate, overwrite = T)
+    seurat <- SeuratDisk::LoadH5Seurat(intermediate)
+    unlink(intermediate)
+    return(seurat)
+  })
+  return(seurat)
 }
 
 
@@ -129,10 +158,12 @@ read_anndata_to_seurat <- function(ds_file) {
 read_anndata_to_seurat_exp <- function(ds_file) {
 
   warning(
-      "!! Importing AnnData is not always working as expected in Seurat v3. ",
-      "For your convenience the FASTGenomics team provides this beta loading routine. ",
-      "However, this reader only reads the `.X`, `.obs` and `.var` components of the AnnData object.\n",
-          call. = TRUE, immediate. = TRUE)
+    "!!!\n",
+    "Importing AnnData is not always working as expected in Seurat v3.\n",
+    "For your convenience the FASTGenomics team provides this beta loading routine.\n",
+    "However, this reader only reads the `.X`, `.obs` and `.var` components of the AnnData object.\n",
+    "!!!\n",
+    call. = TRUE, immediate. = TRUE)
 
   file <- rhdf5::H5Fopen(ds_file, flags = "H5F_ACC_RDONLY")
   contents <- rhdf5::h5dump(file)
@@ -140,6 +171,10 @@ read_anndata_to_seurat_exp <- function(ds_file) {
 
   cell_metadata <- contents$obs
   gene_metadata <- contents$var
+  if (class(cell_metadata) == "list") {
+    stop("The data file seems to be from Anndata>0.7.2.\n",
+            "Please use `experimental_reders = F`.")
+  }
 
   if (class(contents$X) == "list") {
     matrix <- Matrix::sparseMatrix(

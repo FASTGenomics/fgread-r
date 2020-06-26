@@ -3,7 +3,7 @@
 \name{read_loom_to_seurat_exp}
 \alias{read_loom_to_seurat_exp}
 \title{Read a loom dataset with the experimental FASTGenomics reader.
-Importing loom files is currently unavailable in Seurat v3.
+Importing Loom is not always working as expected in Seurat v3.
 This beta loader provided by FASTGenomics only reads the count table
 and the row/col attributes that can fit in a data frame structure (i.e. all higher
 dimensional attributes are discarded). To keep the implementation simple we read the
@@ -20,7 +20,7 @@ A seurat Object.
 }
 \description{
 Read a loom dataset with the experimental FASTGenomics reader.
-Importing loom files is currently unavailable in Seurat v3.
+Importing Loom is not always working as expected in Seurat v3.
 This beta loader provided by FASTGenomics only reads the count table
 and the row/col attributes that can fit in a data frame structure (i.e. all higher
 dimensional attributes are discarded). To keep the implementation simple we read the

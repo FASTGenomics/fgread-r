@@ -15,7 +15,12 @@ test_that("Check equality of metadata in json and Seurat object", {
     file <- json_info["expressionDataFileInfos"][[1]][[1]]$name
     format <- tail(strsplit(file, "\\.")[[1]], n = 1)
     if (format %in% names(readers)) {
-      seurat <- fgread::load_data(json_info$title, experimental_readers = T, data_dir = DATADIR)
+      # run tests with and without experimental readers
+      seurat <- tryCatch({
+        fgread::load_data(json_info$title, experimental_readers = T, data_dir = DATADIR)
+      }, error = function(e) {
+        fgread::load_data(json_info$title, experimental_readers = F, data_dir = DATADIR)
+      })
       expect_equal(dim(seurat)[[1]], json_info$numberOfGenes)
       expect_equal(dim(seurat)[[2]], json_info$numberOfCells)
       expect_equal(seurat@project.name, json_info$title)
