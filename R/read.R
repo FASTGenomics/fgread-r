@@ -226,15 +226,14 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
   if (experimental_readers) {
     readers <- utils::modifyList(DEFAULT_READERS, EXPERIMENTAL_READERS)
     readers <- utils::modifyList(readers, additional_readers)
-  }
-  else {
+  } else {
     readers <- utils::modifyList(DEFAULT_READERS, additional_readers)
   }
 
   # get single dataset
   if (missing(ds)) {
     single_df <- ds_info(data_dir = data_dir, pretty = FALSE, ignore_empty = F)
-    # stopifnot(dim(single_df)[1]==1)
+
     if (dim(single_df)[1] != 1) {
       stop("There is more than one dataset available. Please select one by its ID or title.")
     }
@@ -249,32 +248,35 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
     stop("There is no expression data available in this data set.")
   } else if (exp_count > 1) {
     expr_names <- expr_file_infos_to_list(single_df, "expressionDataFileInfos")
+    str_expr_names <- paste(expr_names, collapse = ", ")
 
     if (missing(expression_file)) {
       stop(glue::glue("There is more than one expression data available in this data set.\n",
         'Please specifiy which you want to load by setting "expression_file".\n',
-        "Available files are: {paste(expr_names, collapse=", ")}."))
+        "Available files are: {str_expr_names}."))
     } else {
       if (is.element(expression_file, expr_names)) {
         file <- expression_file
       } else {
-        stop(glue::glue('File "{expression_file}" not found in dataset expresison files ({paste(expr_names, collapse=", ")}).'))
+        stop(glue::glue('File "{expression_file}" not found in dataset expresison files ({str_expr_names}).'))
       }
 
     }
   } else {
     file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
-    if ((!missing(expression_file)) & expression_file != file) {
-      stop(glue::glue('Expression file "{expression_file}", not found in this dataset.\n',
+
+    if (!missing(expression_file)) {
+      if (expression_file != file) {
+        stop(glue::glue('Expression file "{expression_file}", not found in this dataset.\n',
         "There is only one expression file ({file}) in this dataset.\n",
         'You can skip "expression_file".'))
+      }
     }
   }
 
 
   title <- single_df$title[[1]]
   path <- single_df$path[[1]]
-  print(expr_file_infos_to_list(single_df, "expressionDataFileInfos"))
 
   if (missing(as_format)) {
     tryCatch({ format <- tolower(tools::file_ext(file)) },
@@ -290,8 +292,7 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
     if (meta_count >= 1) {
       if (meta_count == 1) {
         print(glue::glue("There is {meta_count} metadata file in this dataset.\n"))
-      }
-      else {
+      } else {
         print(glue::glue("There are {meta_count} metadata files in this dataset.\n"))
       }
       print(glue::glue("This metadata will not be integrated into the anndata object."))
@@ -309,8 +310,7 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
     n_cells <- dim(seurat)[[2]]
     print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n\n'))
     return(seurat)
-  }
-  else {
+  } else {
     stop(glue::glue(
             'Unsupported file format "{format}", use one of {supported_readers_str} or implement your ',
             "own reading function. See {DOCSURL} for more information."))
@@ -337,6 +337,7 @@ add_metadata <- function(seurat, ds_df) {
   seurat@project.name <- ds_df$title[[1]]
   seurat@meta.data$fg_dataset_id <- as.factor(ds_df$id[[1]])
   seurat@misc$fastgenomics = list(metadata = metadata, id = ds_df$id[[1]])
+
   return(seurat)
 }
 
@@ -363,6 +364,7 @@ expr_file_infos_to_list <- function(single_ds_df, key, as_string = F) {
   }
 }
 
+
 #' Get paths of all available datasets
 #' 
 #' @param data_dir The directory containing sub-folders of the \code{"dataset_xxxx"}
@@ -379,9 +381,8 @@ get_ds_paths <- function(data_dir, ignore_empty = T) {
 
   if (length(dirs) == 0) {
     if (ignore_empty) {
-      warning("There are no datasets attached to this analysis.", immediate = T)
-    }
-    else {
+      warning("There are no datasets attached to this analysis.")
+    } else {
       stop("There are no datasets attached to this analysis.")
     }
   }
