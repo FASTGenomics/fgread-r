@@ -297,7 +297,7 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
       }
       print(glue::glue("This metadata will not be integrated into the anndata object."))
     }
-    print(glue::glue('Loading file "{file} from dataset "{title}" in format "{format}" from directory "{path}"...'))
+    print(glue::glue('Loading file "{file}" from dataset "{title}" in format "{format}" from directory "{path}"...'))
     file_path = file.path(path, file)
     seurat <- readers[[format]](file_path)
 
