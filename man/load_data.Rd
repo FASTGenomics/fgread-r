@@ -9,6 +9,7 @@ load_data(
   data_dir = DATA_DIR,
   additional_readers = list(),
   experimental_readers = F,
+  expression_file,
   as_format
 )
 }
@@ -23,6 +24,9 @@ format. Still experimental, by default an empty list}
 
 \item{experimental_readers}{Boolean whether FASTGenomics in-house experimental
 readers should be used. By default set to False.}
+
+\item{expression_file}{The name of the expression file you want to load.
+Only needed when there are multiple expression files in a dataset.}
 
 \item{as_format}{Specifies which reader should be uses for this dataset. Overwrites the
 auto-detection of the format. Possible parameters are the file extensions of our

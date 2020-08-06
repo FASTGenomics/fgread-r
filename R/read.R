@@ -107,7 +107,7 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
   }
 
   if (!pretty & !output) {
-    warning('You have set "pretty" and "output" to false. Hence, this function will do/return nothing.')
+    warning('You have set "pretty" and "output" to false. Hence, this function will do/return nothing.', immediate = T)
   }
 
   # create output and display 
@@ -116,17 +116,8 @@ ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR
     ds_df <- get_datasets_df(data_dir = data_dir, ignore_empty = FALSE)
     single_ds_df = select_ds_id(ds, ds_df)
 
-    z <- NULL
-    for (expr in single_ds_df["expressionDataFileInfos"][[1]][[1]]) {
-      z <- c(z, expr$name)
-    }
-    single_ds_df["expressionDataFileNames"] <- paste(z, collapse = ", ")
-
-    z <- NULL
-    for (expr in single_ds_df["metaDataFileInfos"][[1]][[1]]) {
-      z <- c(z, expr$name)
-    }
-    single_ds_df["metaDataFileNames"] <- paste(z, collapse = ", ")
+    single_ds_df["expressionDataFileNames"] <- expr_file_infos_to_list(single_ds_df, "expressionDataFileInfos", as_string = T)
+    single_ds_df["metaDataFileNames"] <- expr_file_infos_to_list(single_ds_df, "metaDataFileInfos", as_string = T)
 
     if (pretty) {
       pretty_df <- single_ds_df
@@ -214,6 +205,8 @@ select_ds_id <- function(ds, df) {
 #'
 #' @param experimental_readers Boolean whether FASTGenomics in-house experimental
 #'       readers should be used. By default set to False. 
+#' @param expression_file The name of the expression file you want to load.
+#' Only needed when there are multiple expression files in a dataset. 
 #' 
 #' @param as_format Specifies which reader should be uses for this dataset. Overwrites the
 #' auto-detection of the format. Possible parameters are the file extensions of our
@@ -228,20 +221,19 @@ select_ds_id <- function(ds, df) {
 #' }
 #'
 #' @export
-load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F, as_format) {
+load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F, expression_file, as_format) {
   # update list of readers
   if (experimental_readers) {
     readers <- utils::modifyList(DEFAULT_READERS, EXPERIMENTAL_READERS)
     readers <- utils::modifyList(readers, additional_readers)
-  }
-  else {
+  } else {
     readers <- utils::modifyList(DEFAULT_READERS, additional_readers)
   }
 
   # get single dataset
   if (missing(ds)) {
     single_df <- ds_info(data_dir = data_dir, pretty = FALSE, ignore_empty = F)
-    # stopifnot(dim(single_df)[1]==1)
+
     if (dim(single_df)[1] != 1) {
       stop("There is more than one dataset available. Please select one by its ID or title.")
     }
@@ -254,16 +246,37 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
 
   if (exp_count == 0) {
     stop("There is no expression data available in this data set.")
+  } else if (exp_count > 1) {
+    expr_names <- expr_file_infos_to_list(single_df, "expressionDataFileInfos")
+    str_expr_names <- paste(expr_names, collapse = ", ")
+
+    if (missing(expression_file)) {
+      stop(glue::glue("There is more than one expression data available in this data set.\n",
+        'Please specifiy which you want to load by setting "expression_file".\n',
+        "Available files are: {str_expr_names}."))
+    } else {
+      if (is.element(expression_file, expr_names)) {
+        file <- expression_file
+      } else {
+        stop(glue::glue('File "{expression_file}" not found in dataset expresison files ({str_expr_names}).'))
+      }
+
+    }
+  } else {
+    file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
+
+    if (!missing(expression_file)) {
+      if (expression_file != file) {
+        stop(glue::glue('Expression file "{expression_file}", not found in this dataset.\n',
+        "There is only one expression file ({file}) in this dataset.\n",
+        'You can skip "expression_file".'))
+      }
+    }
   }
-  if (exp_count > 1) {
-    stop("There is more than one expression data available in this data set.\n",
-         "Currently we only provide reading functionality for one expression data file.\n",
-         "Please load the required data manually from the corresponding folder in /fastgenomics/data/.")
-  }
+
 
   title <- single_df$title[[1]]
   path <- single_df$path[[1]]
-  file <- single_df["expressionDataFileInfos"][[1]][[1]][[1]]$name
 
   if (missing(as_format)) {
     tryCatch({ format <- tolower(tools::file_ext(file)) },
@@ -279,13 +292,12 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
     if (meta_count >= 1) {
       if (meta_count == 1) {
         print(glue::glue("There is {meta_count} metadata file in this dataset.\n"))
-      }
-      else {
+      } else {
         print(glue::glue("There are {meta_count} metadata files in this dataset.\n"))
       }
       print(glue::glue("This metadata will not be integrated into the anndata object."))
     }
-    print(glue::glue('Loading dataset "{title}" in format "{format}" from directory "{path}"...'))
+    print(glue::glue('Loading file "{file}" from dataset "{title}" in format "{format}" from directory "{path}"...'))
     file_path = file.path(path, file)
     seurat <- readers[[format]](file_path)
 
@@ -298,8 +310,7 @@ load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), expe
     n_cells <- dim(seurat)[[2]]
     print(glue::glue('Loaded dataset "{title}" with {n_genes} genes and {n_cells} cells\n\n'))
     return(seurat)
-  }
-  else {
+  } else {
     stop(glue::glue(
             'Unsupported file format "{format}", use one of {supported_readers_str} or implement your ',
             "own reading function. See {DOCSURL} for more information."))
@@ -326,8 +337,33 @@ add_metadata <- function(seurat, ds_df) {
   seurat@project.name <- ds_df$title[[1]]
   seurat@meta.data$fg_dataset_id <- as.factor(ds_df$id[[1]])
   seurat@misc$fastgenomics = list(metadata = metadata, id = ds_df$id[[1]])
+
   return(seurat)
 }
+
+#' Returns DataFileInfos as a vecotor or as a string.
+#' 
+#' @param single_ds_df A dataframe with a single dataset.
+#' 
+#' @param key The column to convert (e.g. "expressionDataFileInfos").
+#' 
+#' @param as_string Whether to return a formatted string.
+#' 
+#' @return A vecotr or a formatted string.
+#' 
+expr_file_infos_to_list <- function(single_ds_df, key, as_string = F) {
+  z <- NULL
+  for (expr in single_ds_df[key][[1]][[1]]) {
+    z <- c(z, expr$name)
+  }
+  if (as_string) {
+    s <- paste(z, collapse = ", ")
+    return(s)
+  } else {
+    return(z)
+  }
+}
+
 
 #' Get paths of all available datasets
 #' 
@@ -346,12 +382,9 @@ get_ds_paths <- function(data_dir, ignore_empty = T) {
   if (length(dirs) == 0) {
     if (ignore_empty) {
       warning("There are no datasets attached to this analysis.")
-    }
-    else {
+    } else {
       stop("There are no datasets attached to this analysis.")
     }
   }
-
   return(dirs)
-
 }
