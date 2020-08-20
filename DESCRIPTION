@@ -1,6 +1,6 @@
 Package: fgread
 Title: FASTGenomics read module for R
-Version: 0.4.6
+Version: 0.4.7
 Authors@R: 
     person(given = "FAST",
            family = "Genomics",
@@ -24,7 +24,7 @@ Imports:
 Remotes:
     github::mojaveazure/seurat-disk@02c51247e58d6aa9bd694b3c1470143e2116876c
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: 
     IRdisplay,
     testthat (>= 2.1.0)
