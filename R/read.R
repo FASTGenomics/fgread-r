@@ -186,7 +186,7 @@ select_ds_id <- function(ds, df) {
   } else if (len_df == 0) {
     add_err <- ""
     if (!startsWith(ds, "dataset-")) {
-      add_err <- " Please note, that dataset titles can be changed by the owner. To be safe, you might want to consider dataset IDs instead."
+      add_err <- " Please note that dataset titles can be changed by the owner. To be safe, you might want to consider dataset IDs instead."
     }
     stop(paste("Your selection matches no datasets.", add_err, sep = ""))
   } else {
