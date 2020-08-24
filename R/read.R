@@ -183,6 +183,12 @@ select_ds_id <- function(ds, df) {
   len_df <- dim(single_df)[1]
   if (len_df == 1) {
     return(single_df)
+  } else if (len_df == 0) {
+    add_err <- ""
+    if (!startsWith(ds, "dataset-")) {
+      add_err <- " Please note that dataset titles can be changed by the owner. To be safe, you might want to consider dataset IDs instead."
+    }
+    stop(paste("Your selection matches no datasets.", add_err, sep = ""))
   } else {
     stop(glue::glue("Your selection matches {len_df} datasets. Please make sure to select exactly one"))
   }
