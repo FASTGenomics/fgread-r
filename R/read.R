@@ -90,12 +90,6 @@ get_datasets_df <- function(data_dir = DATA_DIR, ignore_empty = TRUE) {
 #'
 #' @return A data frame containing all, or a single dataset (depends on ``ds`` and ``output``)
 #'
-#' @examples
-#' try(
-#' dsets <- ds_info()
-#' dsets <- ds_info('Test loom data')
-#' )
-#'
 #' @export
 ds_info <- function(ds = NULL, pretty = NULL, output = NULL, data_dir = DATA_DIR, ignore_empty = TRUE) {
 
@@ -220,11 +214,6 @@ select_ds_id <- function(ds, df) {
 #'
 #' @return dataset loaded as a Seurat Object
 #'
-#' @examples
-#' try(
-#' load_data()                    # returns the Seurat object if only one dataset is available
-#' load_data('Test loom data')    # returns the Seurat object from dataset specified by title
-#' )
 #'
 #' @export
 load_data <- function(ds, data_dir = DATA_DIR, additional_readers = list(), experimental_readers = F, expression_file, as_format) {
