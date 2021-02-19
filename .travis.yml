@@ -1,6 +1,7 @@
-language: R
-sudo: false
+language: r
 cache: packages
+os: unix
+
 
 script: true
 
@@ -14,8 +15,8 @@ before_deploy:
 
 deploy:
   provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: false
+  strategy: git
+  token: $GITHUB_TOKEN
+  keep_history: false
   on:
     branch: master
