@@ -6,6 +6,10 @@ dist: focal
 
 script: true
 
+before_install:
+  - sudo apt-get install libharfbuzz-dev
+  - sudo apt-get install libfribidi-dev
+  
 install:
   - Rscript -e 'install.packages("remotes")'
   - Rscript -e 'remotes::install_cran("pkgdown")'
