@@ -1,12 +1,17 @@
-language: R
-sudo: false
+language: r
 cache: packages
+os: linux
+dist: focal
+
 
 script: true
 
+before_install:
+  - sudo apt-get install libharfbuzz-dev
+  - sudo apt-get install libfribidi-dev
+  
 install:
-  - Rscript -e 'install.packages("remotes")'
-  - Rscript -e 'remotes::install_cran("pkgdown")'
+  - Rscript -e 'install.packages("pkgdown")'
 
 before_deploy:
   - Rscript -e 'pkgdown::build_site(examples=F, new_process = FALSE)'
@@ -14,8 +19,9 @@ before_deploy:
 
 deploy:
   provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN
-  keep-history: false
+  strategy: git
+  skip_cleanup: true
+  token: $GITHUB_TOKEN
+  keep_history: false
   on:
     branch: master
