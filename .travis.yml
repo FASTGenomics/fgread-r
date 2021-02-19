@@ -1,13 +1,13 @@
 language: r
 cache: packages
 os: linux
+dist: focal
 
 
 script: true
 
 install:
-  - Rscript -e 'install.packages("remotes")'
-  - Rscript -e 'remotes::install_cran("pkgdown")'
+  - Rscript -e 'install.packages("pkgdown")'
 
 before_deploy:
   - Rscript -e 'pkgdown::build_site(examples=F, new_process = FALSE)'
