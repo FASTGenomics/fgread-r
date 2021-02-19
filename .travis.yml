@@ -7,7 +7,7 @@ dist: focal
 script: true
 
 install:
-  - Rscript -e 'install.packages("pkgdown")'
+  - Rscript -e 'remotes::install_cran("pkgdown")'
 
 before_deploy:
   - Rscript -e 'pkgdown::build_site(examples=F, new_process = FALSE)'
