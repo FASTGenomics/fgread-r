@@ -11,7 +11,7 @@ if (Sys.getenv("FG_URL") != "") {
 }
 
 DOCSURL <- paste(FGURL, "/docs/", sep = "")
-DS_URL_PREFIX <- paste(FGURL, "/webclient/ui/#/datasets/detail-", sep = "")
+DS_URL_PREFIX <- paste(FGURL, "/datasets/detail-", sep = "")
 
 #' Construct a dataframe of all availabe datasets
 #' 
