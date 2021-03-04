@@ -1,0 +1,29 @@
+{
+  "title": "Loom dataset meta",
+  "schemaVersion": "1.2",
+  "id": "dataset-f93640431b0e4835a55332mbrnepxlxi",
+  "description": "<h3>Description</h3><p>Some nice description with <a href=\"https://www.fastgenomics.org/\">links</a>.</p>",
+  "organism": "Mouse (Mus musculus)",
+  "tissue": "mouse embryo",
+  "preprocessing": null,
+  "numberOfCells": 298,
+  "numberOfGenes": 16892,
+  "technology": "sci-RNA-seq",
+  "license": "<p>MIT</p>",
+  "webLink": "https://www.fastgenomics.org/",
+  "citation": "<p>FASTGenomics et al. 2020</p>",
+  "metaDataFileInfos": [
+    {
+      "name": "meta.txt",
+      "size": 598,
+      "state": "ready"
+    }
+  ],
+  "expressionDataFileInfos": [
+    {
+      "name": "data.loom",
+      "size": 3457358,
+      "state": "ready"
+    }
+  ]
+}

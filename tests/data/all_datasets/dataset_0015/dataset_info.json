@@ -1,0 +1,23 @@
+{
+  "title": "AnnData v0.7.3 dataset",
+  "schemaVersion": "1.2",
+  "id": "dataset-f93640431b0e4835a55332figaqdiem2",
+  "description": "Same dataset as dataset_0003 but saved with anndata version 0.7.3",
+  "organism": "Mouse (Mus musculus)",
+  "tissue": "mouse embryo",
+  "preprocessing": null,
+  "numberOfCells": 10,
+  "numberOfGenes": 20,
+  "technology": "sci-RNA-seq",
+  "license": "<p>MIT</p>",
+  "webLink": "https://www.fastgenomics.org/",
+  "citation": "<p>FASTGenomics et al. 2020</p>",
+  "metaDataFileInfos": [],
+  "expressionDataFileInfos": [
+    {
+      "name": "data.h5ad",
+      "size": 21288,
+      "state": "ready"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+language: r
+cache: packages
+os: linux
+dist: focal
+
+
+script: true
+
+before_install:
+  - sudo apt-get install libharfbuzz-dev
+  - sudo apt-get install libfribidi-dev
+  
+install:
+  - Rscript -e 'install.packages("pkgdown")'
+
+before_deploy:
+  - Rscript -e 'pkgdown::build_site(examples=F, new_process = FALSE)'
+  - rm .gitignore # there is docs/* in gitignore
+
+deploy:
+  provider: pages
+  strategy: git
+  skip_cleanup: true
+  token: $GITHUB_TOKEN
+  keep_history: false
+  on:
+    branch: master

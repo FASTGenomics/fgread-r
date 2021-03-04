@@ -1,0 +1,23 @@
+{
+  "title": "Other dataset",
+  "schemaVersion": "1.2",
+  "id": "dataset-f93640431b0e4835a55332wgth1y34lz",
+  "description": "<h3>Description</h3><p>Some nice description with <a href=\"https://www.fastgenomics.org/\">links</a>.</p>",
+  "organism": "Mouse (Mus musculus)",
+  "tissue": "mouse embryo",
+  "preprocessing": null,
+  "numberOfCells": 3,
+  "numberOfGenes": 2,
+  "technology": "sci-RNA-seq",
+  "license": "<p>MIT</p>",
+  "webLink": "https://www.fastgenomics.org/",
+  "citation": "<p>FASTGenomics et al. 2020</p>",
+  "metaDataFileInfos": [],
+  "expressionDataFileInfos": [
+    {
+      "name": "data.fg",
+      "size": 166,
+      "state": "ready"
+    }
+  ]
+}
